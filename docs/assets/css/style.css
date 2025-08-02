@@ -1,0 +1,99 @@
+/* Styling dasar untuk body dan custom class */
+body {
+    font-family: 'Inter', sans-serif;
+    /* background-color: #fefce8; */
+}
+
+/* --- Input Mengapung (Yellow/Teal Theme) --- */
+.input-group {
+    position: relative;
+}
+.input-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8; /* slate-400 */
+    z-index: 10;
+    transition: color 0.2s ease-in-out;
+}
+.floating-input {
+    background-color: #ffffff; /* white */
+    border-color: #cbd5e1; /* slate-300 */
+    color: #1e293b; /* slate-800 */
+    padding: 1.001rem 1rem 0.75rem 2.75rem; /* top, right, bottom, left */
+    -moz-appearance: textfield;
+    border-width: 1px;
+}
+.floating-input::-webkit-inner-spin-button,
+.floating-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.floating-label {
+    font-size: 15px;
+    position: absolute;
+    top: 50%;
+    left: 2.75rem;
+    transform: translateY(-50%);
+    color: #64748b; /* slate-500 */
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+    transform-origin: left top;
+}
+/* Efek saat input di-fokus atau terisi */
+.floating-input:focus {
+    border-color: #14b8a6; /* teal-500 */
+    box-shadow: 0 0 0 1px #14b8a6;
+}
+.floating-input:focus + .floating-label,
+.floating-input:not(:placeholder-shown) + .floating-label {
+    transform: translateY(-90%) scale(0.75);
+    color: #0d9488; /* teal-600 */
+}
+.floating-input:focus ~ .input-icon {
+    color: #0d9488; /* teal-600 */
+}
+
+/* Animasi untuk hasil kalkulasi */
+.slide-fade-in {
+    animation: slide-fade 0.5s ease-out forwards;
+}
+@keyframes slide-fade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Tab Utama (Yellow/Teal Theme) --- */
+.main-tab-button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500; /* medium */
+    border-radius: 0.75rem; /* rounded-xl */
+    flex: 1;
+    color: #475569; /* slate-600 */
+}
+.main-tab-button.active {
+    background-color: white;
+    color: #0f766e; /* teal-700 */
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    font-weight: 600; /* semibold */
+}
+
+/* --- Tab Hasil (Yellow/Teal Theme) --- */
+.result-tab-button {
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+    font-weight: 400; /* regular */
+    color: #64748b; /* slate-500 */
+}
+.result-tab-button.active {
+    border-bottom-color: #14b8a6; /* teal-500 */
+    color: #0d9488; /* teal-600 */
+    font-weight: 600; /* semibold */
+}
