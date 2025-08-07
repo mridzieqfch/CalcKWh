@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         const faktorKali = parseFloat(inputs.faktorKali.value) || 0;
+        // [PERBAIKAN] Ambil nilai PPJ dari input setiap kali submit
         const ppjPersen = (parseFloat(inputs.ppj.value) || 0) / 100;
         const wbpAwal = parseFloat(inputs.wbpAwal.value) || 0;
         const lwbpAwal = parseFloat(inputs.lwbpAwal.value) || 0;

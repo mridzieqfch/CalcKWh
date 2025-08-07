@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tarifPerKwh = parseFloat(selectGolongan.value) || 0;
         const kwhAwal = parseFloat(inputs.kwhAwal.value);
         const kwhAkhir = parseFloat(inputs.kwhAkhir.value);
+        // [PERBAIKAN] Ambil nilai PPJ dari input setiap kali submit
         const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         
         if (tarifPerKwh <= 0) {

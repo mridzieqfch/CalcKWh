@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const tarifPerKwh = parseFloat(selectGolongan.value) || 0;
         const nominalBeli = parseFloat(inputNominal.value.replace(/\./g, '')) || 0;
+        // [PERBAIKAN] Ambil nilai PPJ dari input setiap kali submit
         const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         
         if (tarifPerKwh <= 0) {
@@ -69,10 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="mt-6">
                         <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3 text-center">Detail Perhitungan</h3>
                         <div class="p-4 bg-teal-50 border-2 border-teal-100 rounded-lg text-center font-mono text-slate-600 text-sm sm:text-base">
-                            (${formatRupiah(nominalBeli)} - ${formatRupiah(ppj)} (PPJ)) / ${formatRupiah(tarifPerKwh)} = <strong class="text-slate-800">${formatAngka(kwhDidapat, 2)} kWh</strong>
+                           (${formatRupiah(nominalBeli)} - ${formatRupiah(ppj)} (PPJ)) / ${formatRupiah(tarifPerKwh)} = <strong class="text-slate-800">${formatAngka(kwhDidapat, 2)} kWh</strong>
                         </div>
-                        <p class="text-center text-xs text-slate-500 mt-2 px-2">
-                            *Nominal pembelian dikurangi PPJ (${(ppjPersen * 100).toFixed(1)}%).
+                         <p class="text-center text-xs text-slate-500 mt-2 px-2">
+                            *Nominal pembelian dikurangi Pajak Penerangan Jalan (${(ppjPersen * 100).toFixed(1)}%).
                         </p>
                     </div>
 

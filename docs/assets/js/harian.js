@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // [PERBAIKAN] Ambil nilai PPJ dari input setiap kali render
         const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         const totalKwhHarian = daftarPerangkat.reduce((total, p) => total + ((p.watt * p.jam) / 1000), 0);
         const totalKwhBulanan = totalKwhHarian * 30;
