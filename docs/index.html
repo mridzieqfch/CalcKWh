@@ -43,12 +43,22 @@
             <!-- Kalkulator Perangkat -->
             <div id="content-daya">
                 <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
-                    <div class="mb-8">
-                        <h2 class="text-lg font-bold text-slate-800 mb-3">Pilih Golongan Tarif Anda</h2>
-                        <div class="select-group">
-                             <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt mt-1'></i></span>
-                             <select id="daya-golongan-tarif" class="select-input"></select>
-                             <span id="daya-tarif-display" class="select-tarif-display"></span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-8 mb-8">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 mb-3">Golongan Tarif</h2>
+                            <div class="select-group">
+                                 <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt mt-1'></i></span>
+                                 <select id="daya-golongan-tarif" class="select-input"></select>
+                                 <span id="daya-tarif-display" class="select-tarif-display"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 mb-3">PPJ</h2>
+                             <div class="input-group">
+                                <span class="input-icon text-xl"><i class='bx bxs-badge-dollar mt-1'></i></span>
+                                <input type="number" id="daya-ppj" value="3" placeholder=" " step="any" class="floating-input">
+                                <label for="daya-ppj" class="floating-label">PPJ (%)</label>
+                            </div>
                         </div>
                     </div>
                     <div class="mb-8">
@@ -59,7 +69,7 @@
                                 <input type="number" id="daya-watt" placeholder="Daya (Watt)" class="form-input-std" required>
                                 <input type="number" step="any" id="daya-jam" placeholder="Jam Pakai/Hari" class="form-input-std" required>
                             </div>
-                            <button type="submit" class="w-full bg-teal-500 text-white font-semibold py-3 px-4 rounded-xl hover:bg-teal-600 transition-all duration-300 transform hover:scale-[1.02]">Tambah ke Daftar</button>
+                             <button type="submit" class="w-full bg-teal-500 text-white font-semibold py-3 px-4 rounded-xl hover:bg-teal-600 transition-all duration-300 transform hover:scale-[1.02]">Tambah ke Daftar</button>
                         </form>
                     </div>
                     <div>
@@ -77,12 +87,22 @@
                 <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
                     <form id="form-prabayar">
                         <div class="space-y-8">
-                            <div>
-                                <h2 class="text-lg font-bold text-slate-800 mb-3">Pilih Golongan Tarif</h2>
-                                <div class="select-group">
-                                    <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt mt-1'></i></span>
-                                    <select id="prabayar-golongan-tarif" class="select-input"></select>
-                                    <span id="prabayar-tarif-display" class="select-tarif-display"></span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-8">
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-800 mb-3">Golongan Tarif</h2>
+                                    <div class="select-group">
+                                        <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt mt-1'></i></span>
+                                        <select id="prabayar-golongan-tarif" class="select-input"></select>
+                                        <span id="prabayar-tarif-display" class="select-tarif-display"></span>
+                                   </div>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-800 mb-3">PPJ</h2>
+                                     <div class="input-group">
+                                        <span class="input-icon text-xl"><i class='bx bxs-badge-dollar mt-1'></i></span>
+                                        <input type="number" id="prabayar-ppj" value="3" placeholder=" " step="any" class="floating-input">
+                                        <label for="prabayar-ppj" class="floating-label">PPJ (%)</label>
+                                    </div>
                                 </div>
                             </div>
                             <div>
@@ -106,12 +126,22 @@
             <div id="content-pascabayar" class="hidden">
                 <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
                     <form id="form-pascabayar">
-                        <div class="mb-8">
-                            <h2 class="text-lg font-bold text-slate-800 mb-3">Pilih Golongan Tarif</h2>
-                            <div class="select-group">
-                                <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt mt-1'></i></span>
-                                <select id="pascabayar-golongan-tarif" class="select-input"></select>
-                                <span id="pascabayar-tarif-display" class="select-tarif-display"></span>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-8 mb-8">
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800 mb-3">Golongan Tarif</h2>
+                                <div class="select-group">
+                                    <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt mt-1'></i></span>
+                                    <select id="pascabayar-golongan-tarif" class="select-input"></select>
+                                    <span id="pascabayar-tarif-display" class="select-tarif-display"></span>
+                               </div>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800 mb-3">PPJ</h2>
+                                 <div class="input-group">
+                                    <span class="input-icon text-xl"><i class='bx bxs-badge-dollar mt-1'></i></span>
+                                    <input type="number" id="pascabayar-ppj" value="3" placeholder=" " step="any" class="floating-input">
+                                    <label for="pascabayar-ppj" class="floating-label">PPJ (%)</label>
+                                </div>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-x-4 gap-y-8">
@@ -133,7 +163,7 @@
                             </div>
                         </div>
                         <div class="mt-10">
-                            <button type="submit" class="w-full bg-teal-500 text-white font-bold py-4 px-4 rounded-xl hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-500/50 transition-all duration-300 transform hover:scale-[1.02]">Hitung Estimasi Biaya</button>
+                          <button type="submit" class="w-full bg-teal-500 text-white font-bold py-4 px-4 rounded-xl hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-500/50 transition-all duration-300 transform hover:scale-[1.02]">Hitung Estimasi Biaya</button>
                         </div>
                     </form>
                 </main>
@@ -144,12 +174,22 @@
             <div id="content-industri" class="hidden">
                 <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
                     <form id="form-industri">
-                        <div class="mb-8">
-                            <h2 class="text-lg font-bold text-slate-800 mb-3">Faktor Kali (x)</h2>
-                            <div class="input-group">
-                                <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16.98h.01"/><path d="M18 16.98h.01"/><path d="M18 16.98h.01"/><path d="M18 16.98h.01"/><path d="M6 16.98h.01"/><path d="M12 16.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="m6 12 6-6 6 6"/><path d="M12 17v5"/><path d="M12 7V2"/></svg></span>
-                                <input type="number" id="industri-faktor-kali" value="400" placeholder=" " step="any" class="floating-input">
-                                <label for="industri-faktor-kali" class="floating-label">Faktor Kali (x)</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-8 mb-8">
+                             <div>
+                                <h2 class="text-lg font-bold text-slate-800 mb-3">Faktor Kali (x)</h2>
+                                <div class="input-group">
+                                    <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16.98h.01"/><path d="M18 16.98h.01"/><path d="M18 16.98h.01"/><path d="M18 16.98h.01"/><path d="M6 16.98h.01"/><path d="M12 16.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="m6 12 6-6 6 6"/><path d="M12 17v5"/><path d="M12 7V2"/></svg></span>
+                                    <input type="number" id="industri-faktor-kali" value="400" placeholder=" " step="any" class="floating-input">
+                                    <label for="industri-faktor-kali" class="floating-label">Faktor Kali (x)</label>
+                                </div>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800 mb-3">PPJ</h2>
+                                 <div class="input-group">
+                                    <span class="input-icon text-xl"><i class='bx bxs-badge-dollar mt-1'></i></span>
+                                    <input type="number" id="industri-ppj" value="3" placeholder=" " step="any" class="floating-input">
+                                    <label for="industri-ppj" class="floating-label">PPJ (%)</label>
+                                </div>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-x-4 gap-y-8">

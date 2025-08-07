@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectGolongan = document.getElementById('prabayar-golongan-tarif');
     const tarifDisplay = document.getElementById('prabayar-tarif-display');
     const inputNominal = document.getElementById('prabayar-nominal-beli');
+    const inputPpj = document.getElementById('prabayar-ppj');
 
     const initGolonganSelect = () => {
         selectGolongan.innerHTML = '';
@@ -34,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const tarifPerKwh = parseFloat(selectGolongan.value) || 0;
         const nominalBeli = parseFloat(inputNominal.value.replace(/\./g, '')) || 0;
+        const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         
         if (tarifPerKwh <= 0) {
             showErrorModal("Silakan pilih golongan tarif yang valid.");
@@ -43,8 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
             showErrorModal("Nominal pembelian harus lebih besar dari nol.");
             return;
         }
+        if (ppjPersen < 0) {
+            showErrorModal("Persentase PPJ tidak boleh negatif.");
+            return;
+        }
 
-        const ppj = TARIF_DATA.ppj_persen * nominalBeli;
+        const ppj = ppjPersen * nominalBeli;
         const stroom = nominalBeli - ppj;
         const kwhDidapat = stroom / tarifPerKwh;
 
@@ -65,8 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="p-4 bg-teal-50 border-2 border-teal-100 rounded-lg text-center font-mono text-slate-600 text-sm sm:text-base">
                             (${formatRupiah(nominalBeli)} - ${formatRupiah(ppj)} (PPJ)) / ${formatRupiah(tarifPerKwh)} = <strong class="text-slate-800">${formatAngka(kwhDidapat, 2)} kWh</strong>
                         </div>
-                            <p class="text-center text-xs text-slate-500 mt-2 px-2">
-                            *Nominal pembelian dikurangi PPJ (${(TARIF_DATA.ppj_persen * 100).toFixed(1)}%).
+                        <p class="text-center text-xs text-slate-500 mt-2 px-2">
+                            *Nominal pembelian dikurangi PPJ (${(ppjPersen * 100).toFixed(1)}%).
                         </p>
                     </div>
 
@@ -80,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         hasilSection.querySelector('.reset-button').addEventListener('click', () => {
             form.reset();
+            inputPpj.value = '3';
             updateTarifDisplay();
             hasilSection.classList.add('hidden');
         });

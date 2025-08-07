@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasilSection = document.getElementById('hasil-industri');
     const inputs = {
         faktorKali: document.getElementById('industri-faktor-kali'),
+        ppj: document.getElementById('industri-ppj'),
         wbpAwal: document.getElementById('industri-wbp-awal'),
         lwbpAwal: document.getElementById('industri-lwbp-awal'),
         kvarhAwal: document.getElementById('industri-kvarh-awal'),
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         const faktorKali = parseFloat(inputs.faktorKali.value) || 0;
+        const ppjPersen = (parseFloat(inputs.ppj.value) || 0) / 100;
         const wbpAwal = parseFloat(inputs.wbpAwal.value) || 0;
         const lwbpAwal = parseFloat(inputs.lwbpAwal.value) || 0;
         const kvarhAwal = parseFloat(inputs.kvarhAwal.value) || 0;
@@ -32,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (faktorKali <= 0) {
             showErrorModal("Faktor kali harus berupa angka positif.");
+            return;
+        }
+        if (ppjPersen < 0) {
+            showErrorModal("Persentase PPJ tidak boleh negatif.");
             return;
         }
 
@@ -48,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const biayaKvarh = kelebihanKvarh * tarif.harga_kvarh;
 
         const subtotalBiaya = biayaWbp + biayaLwbp + biayaKvarh;
-        const biayaPpj = subtotalBiaya * TARIF_DATA.ppj_persen;
+        const biayaPpj = subtotalBiaya * ppjPersen;
         const biayaMateraiFinal = (subtotalBiaya >= TARIF_DATA.materai.batas) ? TARIF_DATA.materai.biaya : 0;
         const totalTagihan = subtotalBiaya + biayaPpj + biayaMateraiFinal;
 
@@ -70,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="flex justify-between items-center py-2 border-b"><span>Biaya Pemakaian LWBP</span><span class="font-semibold">${formatRupiah(biayaLwbp)}</span></div>
                         <div class="flex justify-between items-center py-2 border-b"><span>Biaya Kelebihan kVARh</span><span class="font-semibold">${formatRupiah(biayaKvarh)}</span></div>
                         <div class="flex justify-between items-center font-bold py-2 border-b-2"><span>Subtotal Biaya</span><span>${formatRupiah(subtotalBiaya)}</span></div>
-                        <div class="flex justify-between items-center py-2 border-b"><span>PPJ (${(TARIF_DATA.ppj_persen*100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(biayaPpj)}</span></div>
+                        <div class="flex justify-between items-center py-2 border-b"><span>PPJ (${(ppjPersen*100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(biayaPpj)}</span></div>
                         <div class="flex justify-between items-center py-2"><span>Biaya Materai</span><span class="font-semibold">${formatRupiah(biayaMateraiFinal)}</span></div>
                     </div>
                 </div>
@@ -102,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${ringkasanHTML}
                         ${detailHTML}
                     </div>
-                    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="mt-8 grid grid-cols-2 gap-4">
                         <button class="reset-button w-full bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-300">Hitung Ulang</button>
                         <button id="btn-simpan-industri" class="w-full bg-teal-500 text-white font-bold py-3 px-4 rounded-xl hover:bg-teal-600">Simpan Hasil</button>
                     </div>
@@ -124,7 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hasilSection.querySelector('.reset-button').addEventListener('click', () => {
             form.reset();
-            inputs.faktorKali.value = '400'; 
+            inputs.faktorKali.value = '400';
+            inputs.ppj.value = '3';
             hasilSection.classList.add('hidden');
         });
 

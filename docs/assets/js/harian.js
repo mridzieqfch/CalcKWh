@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const containerDaftarPerangkat = document.getElementById('daftar-perangkat-container');
     const pesanKosong = document.getElementById('pesan-kosong-perangkat');
     const hasilSection = document.getElementById('hasil-daya');
+    const inputPpj = document.getElementById('daya-ppj');
     const inputs = {
         namaAlat: document.getElementById('daya-nama-alat'),
         dayaWatt: document.getElementById('daya-watt'),
@@ -71,10 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         const totalKwhHarian = daftarPerangkat.reduce((total, p) => total + ((p.watt * p.jam) / 1000), 0);
         const totalKwhBulanan = totalKwhHarian * 30;
         const subtotal = totalKwhBulanan * tarifKwhSaatIni;
-        const ppj = subtotal * TARIF_DATA.ppj_persen;
+        const ppj = subtotal * ppjPersen;
         const totalBiaya = subtotal + ppj;
 
         const ringkasanHTML = `
@@ -82,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="space-y-2 text-slate-700">
                     <div class="flex justify-between items-center py-2 border-b"><span>Total Pemakaian Energi</span><span class="font-semibold">${formatAngka(totalKwhBulanan, 2)} kWh/Bulan</span></div>
                     <div class="flex justify-between items-center py-2 border-b"><span>Biaya Pemakaian</span><span class="font-semibold">${formatRupiah(subtotal)}</span></div>
-                    <div class="flex justify-between items-center py-2"><span>PPJ (${(TARIF_DATA.ppj_persen * 100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(ppj)}</span></div>
+                    <div class="flex justify-between items-center py-2"><span>PPJ (${(ppjPersen * 100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(ppj)}</span></div>
                 </div>
                 <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-4 rounded-xl mt-6">
                     <div class="flex justify-between items-center">
@@ -108,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="mt-1 font-mono">
                             Subtotal: ${formatAngka(totalKwhBulanan, 2)} kWh &times; ${formatRupiah(tarifKwhSaatIni)} = <strong class="text-teal-900">${formatRupiah(subtotal)}</strong>
                             <br>
-                            PPJ: ${formatRupiah(subtotal)} &times; ${(TARIF_DATA.ppj_persen * 100).toFixed(1)}% = <strong class="text-teal-900">${formatRupiah(ppj)}</strong>
+                            PPJ: ${formatRupiah(subtotal)} &times; ${(ppjPersen * 100).toFixed(1)}% = <strong class="text-teal-900">${formatRupiah(ppj)}</strong>
                         </p>
                         <hr class="border-dashed border-teal-200 my-2">
                         <p class="font-mono text-base">Total: ${formatRupiah(subtotal)} + ${formatRupiah(ppj)} = <strong class="text-teal-900">${formatRupiah(totalBiaya)}</strong></p>
@@ -147,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     selectGolonganTarif.addEventListener('change', updateTarifDisplay);
+    inputPpj.addEventListener('input', renderDaftarPerangkat);
 
     formTambahPerangkat.addEventListener('submit', (e) => {
         e.preventDefault();

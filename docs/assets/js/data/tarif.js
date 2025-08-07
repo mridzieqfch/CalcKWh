@@ -1,7 +1,4 @@
-// File: assets/js/data/tarif.js
-
 const TARIF_DATA = {
-    ppj_persen: 0.03,
     materai: {
         biaya: 10000,
         batas: 1000000

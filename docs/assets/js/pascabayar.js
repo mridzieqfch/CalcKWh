@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasilSection = document.getElementById('hasil-pascabayar');
     const selectGolongan = document.getElementById('pascabayar-golongan-tarif');
     const tarifDisplay = document.getElementById('pascabayar-tarif-display');
+    const inputPpj = document.getElementById('pascabayar-ppj');
     const inputs = {
         kwhAwal: document.getElementById('pascabayar-kwh-awal'),
         kwhAkhir: document.getElementById('pascabayar-kwh-akhir'),
@@ -34,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tarifPerKwh = parseFloat(selectGolongan.value) || 0;
         const kwhAwal = parseFloat(inputs.kwhAwal.value);
         const kwhAkhir = parseFloat(inputs.kwhAkhir.value);
+        const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         
         if (tarifPerKwh <= 0) {
             showErrorModal("Silakan pilih golongan tarif yang valid.");
@@ -47,17 +49,21 @@ document.addEventListener('DOMContentLoaded', () => {
             showErrorModal("Meter akhir harus lebih besar atau sama dengan meter awal.");
             return;
         }
+        if (ppjPersen < 0) {
+            showErrorModal("Persentase PPJ tidak boleh negatif.");
+            return;
+        }
 
         const pemakaianKwh = kwhAkhir - kwhAwal;
         const subtotalBiaya = pemakaianKwh * tarifPerKwh;
-        const biayaPpj = subtotalBiaya * TARIF_DATA.ppj_persen;
+        const biayaPpj = subtotalBiaya * ppjPersen;
         const biayaMateraiFinal = subtotalBiaya >= TARIF_DATA.materai.batas ? TARIF_DATA.materai.biaya : 0;
         const totalTagihan = subtotalBiaya + biayaPpj + biayaMateraiFinal;
 
         const invoiceHTML = `
             <div id="pascabayar-tab-invoice">
                 <div class="mb-6"><h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Pemakaian</h3><div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg"><span class="text-slate-600">Total Pemakaian kWh</span><span class="font-bold text-slate-800 text-base sm:text-lg">${formatAngka(pemakaianKwh, 0)} kWh</span></div></div>
-                <div class="mb-6"><h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Biaya</h3><div class="space-y-2 text-slate-700"><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>Biaya Pemakaian</span><span class="font-semibold">${formatRupiah(subtotalBiaya)}</span></div><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>PPJ (${(TARIF_DATA.ppj_persen * 100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(biayaPpj)}</span></div><div class="flex justify-between items-center py-2"><span>Biaya Materai</span><span class="font-semibold">${formatRupiah(biayaMateraiFinal)}</span></div></div></div>
+                <div class="mb-6"><h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Biaya</h3><div class="space-y-2 text-slate-700"><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>Biaya Pemakaian</span><span class="font-semibold">${formatRupiah(subtotalBiaya)}</span></div><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>PPJ (${(ppjPersen * 100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(biayaPpj)}</span></div><div class="flex justify-between items-center py-2"><span>Biaya Materai</span><span class="font-semibold">${formatRupiah(biayaMateraiFinal)}</span></div></div></div>
                 <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-4 rounded-xl mt-6"><div class="flex justify-between items-center"><span class="text-lg sm:text-xl font-bold uppercase">Total Tagihan</span><span class="text-lg sm:text-xl font-extrabold tracking-tight">${formatRupiah(totalTagihan)}</span></div></div>
             </div>`;
         
@@ -82,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${invoiceHTML}
                         ${detailHTML}
                     </div>
-                    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="mt-8 grid grid-cols-2 gap-4">
                         <button class="reset-button w-full bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-300">Hitung Ulang</button>
                         <button id="btn-simpan-pascabayar" class="w-full bg-teal-500 text-white font-bold py-3 px-4 rounded-xl hover:bg-teal-600">Simpan Hasil</button>
                     </div>
@@ -104,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hasilSection.querySelector('.reset-button').addEventListener('click', () => {
             form.reset();
+            inputPpj.value = '3';
             updateTarifDisplay();
             hasilSection.classList.add('hidden');
         });
