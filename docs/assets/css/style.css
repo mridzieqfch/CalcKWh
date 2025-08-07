@@ -1,10 +1,9 @@
 /* Styling dasar untuk body dan custom class */
 body {
     font-family: 'Inter', sans-serif;
-    /* background-color: #fefce8; */
 }
 
-/* --- Input Mengapung (Yellow/Teal Theme) --- */
+/* --- Input Mengapung --- */
 .input-group {
     position: relative;
 }
@@ -19,11 +18,13 @@ body {
 }
 .floating-input {
     background-color: #ffffff; /* white */
-    border-color: #cbd5e1; /* slate-300 */
+    border: 1px solid #cbd5e1; /* slate-300 */
     color: #1e293b; /* slate-800 */
     padding: 1.001rem 1rem 0.75rem 2.75rem; /* top, right, bottom, left */
     -moz-appearance: textfield;
-    border-width: 1px;
+    width: 100%;
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: all 0.2s ease-in-out;
 }
 .floating-input::-webkit-inner-spin-button,
 .floating-input::-webkit-outer-spin-button {
@@ -40,6 +41,8 @@ body {
     pointer-events: none;
     transition: all 0.2s ease-in-out;
     transform-origin: left top;
+    background-color: #fff; /* Match input background */
+    padding: 0 0.25rem;
 }
 /* Efek saat input di-fokus atau terisi */
 .floating-input:focus {
@@ -48,52 +51,115 @@ body {
 }
 .floating-input:focus + .floating-label,
 .floating-input:not(:placeholder-shown) + .floating-label {
-    transform: translateY(-90%) scale(0.75);
+    transform: translateY(-120%) scale(0.8);
     color: #0d9488; /* teal-600 */
 }
 .floating-input:focus ~ .input-icon {
     color: #0d9488; /* teal-600 */
 }
 
-/* Animasi untuk hasil kalkulasi */
-.slide-fade-in {
-    animation: slide-fade 0.5s ease-out forwards;
+/* --- Input Select Golongan Tarif (REVISI) --- */
+.select-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid #cbd5e1; /* slate-300 */
+    border-radius: 0.5rem; /* rounded-lg */
+    background-color: #fff;
+    transition: all 0.2s ease-in-out;
 }
-@keyframes slide-fade {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.select-group:focus-within {
+    border-color: #14b8a6; /* teal-500 */
+    box-shadow: 0 0 0 1px #14b8a6;
+}
+.select-group .input-icon {
+    position: static;
+    transform: none;
+    padding-left: 0.85rem;
+}
+.select-input {
+    flex-grow: 1;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0.9rem 0.5rem;
+    font-size: 1rem;
+    color: #1e293b; /* slate-800 */
+    cursor: pointer;
+}
+.select-input:focus {
+    outline: none;
+}
+.select-tarif-display {
+    padding-right: 0.85rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #475569; /* slate-600 */
+    white-space: nowrap;
 }
 
-/* --- Tab Utama (Yellow/Teal Theme) --- */
+/* --- Input Standar (untuk form tambah perangkat) --- */
+.form-input-std {
+    width: 100%;
+    background-color: white;
+    border: 1px solid #cbd5e1; /* slate-300 */
+    border-radius: 0.5rem; /* rounded-lg */
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease-in-out;
+}
+.form-input-std:focus {
+    border-color: #14b8a6; /* teal-500 */
+    box-shadow: 0 0 0 1px #14b8a6;
+    outline: none;
+}
+
+/* Animasi */
+.slide-fade-in { animation: slide-fade 0.5s ease-out forwards; }
+@keyframes slide-fade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Tab Utama --- */
 .main-tab-button {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 500; /* medium */
-    border-radius: 0.75rem; /* rounded-xl */
+    font-weight: 500;
+    border-radius: 0.75rem;
     flex: 1;
-    color: #475569; /* slate-600 */
+    color: #475569;
 }
 .main-tab-button.active {
     background-color: white;
-    color: #0f766e; /* teal-700 */
+    color: #0f766e;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    font-weight: 600; /* semibold */
+    font-weight: 600;
 }
 
-/* --- Tab Hasil (Yellow/Teal Theme) --- */
+/* --- Tab Hasil --- */
 .result-tab-button {
     transition: all 0.3s ease;
     border-bottom: 2px solid transparent;
-    font-weight: 400; /* regular */
-    color: #64748b; /* slate-500 */
+    font-weight: 400;
+    color: #64748b;
 }
 .result-tab-button.active {
-    border-bottom-color: #14b8a6; /* teal-500 */
-    color: #0d9488; /* teal-600 */
-    font-weight: 600; /* semibold */
+    border-bottom-color: #14b8a6;
+    color: #0d9488;
+    font-weight: 600;
+}
+
+/* Style untuk daftar perangkat */
+.perangkat-item { animation: slide-in-item 0.4s ease-out forwards; }
+@keyframes slide-in-item {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Modal Close Button */
+.modal-close-button {
+    font-size: 2rem;
+    line-height: 1;
+    font-weight: bold;
 }

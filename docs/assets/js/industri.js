@@ -1,87 +1,97 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- KONSTANTA UNTUK INDUSTRI ---
-    const HARGA_WBP = 1553.67;
-    const HARGA_LWBP = 1035.76996;
-    const HARGA_KVARH = 1114.74;
-    const FAKTOR_TAN_PHI = 0.62;
-    const PPJ_RATE = 0.03;
-    const BIAYA_MATERAI = 10000;
-    const BATAS_MATERAI = 1000000;
+// File: assets/js/industri.js
 
-    // --- ELEMEN DOM ---
+document.addEventListener('DOMContentLoaded', () => {
+    if (!document.getElementById('content-industri')) return;
+
     const form = document.getElementById('form-industri');
     const hasilSection = document.getElementById('hasil-industri');
     const inputs = {
-        faktor_kali: document.getElementById('industri-faktor-kali'),
-        wbp_awal: document.getElementById('industri-wbp-awal'),
-        lwbp_awal: document.getElementById('industri-lwbp-awal'),
-        kvarh_awal: document.getElementById('industri-kvarh-awal'),
-        wbp_akhir: document.getElementById('industri-wbp-akhir'),
-        lwbp_akhir: document.getElementById('industri-lwbp-akhir'),
-        kvarh_akhir: document.getElementById('industri-kvarh-akhir'),
+        faktorKali: document.getElementById('industri-faktor-kali'),
+        wbpAwal: document.getElementById('industri-wbp-awal'),
+        lwbpAwal: document.getElementById('industri-lwbp-awal'),
+        kvarhAwal: document.getElementById('industri-kvarh-awal'),
+        wbpAkhir: document.getElementById('industri-wbp-akhir'),
+        lwbpAkhir: document.getElementById('industri-lwbp-akhir'),
+        kvarhAkhir: document.getElementById('industri-kvarh-akhir'),
     };
 
-    // Keluar jika form tidak ditemukan
-    if (!form) return;
-
-    // --- EVENT LISTENER UNTUK SUBMIT FORM ---
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // --- PENGAMBILAN DAN VALIDASI INPUT ---
-        const faktor_kali = parseFloat(inputs.faktor_kali.value) || 0;
-        const wbp_awal = parseFloat(inputs.wbp_awal.value) || 0;
-        const lwbp_awal = parseFloat(inputs.lwbp_awal.value) || 0;
-        const kvarh_awal = parseFloat(inputs.kvarh_awal.value) || 0;
-        const wbp_akhir = parseFloat(inputs.wbp_akhir.value) || 0;
-        const lwbp_akhir = parseFloat(inputs.lwbp_akhir.value) || 0;
-        const kvarh_akhir = parseFloat(inputs.kvarh_akhir.value) || 0;
+        const faktorKali = parseFloat(inputs.faktorKali.value) || 0;
+        const wbpAwal = parseFloat(inputs.wbpAwal.value) || 0;
+        const lwbpAwal = parseFloat(inputs.lwbpAwal.value) || 0;
+        const kvarhAwal = parseFloat(inputs.kvarhAwal.value) || 0;
+        const wbpAkhir = parseFloat(inputs.wbpAkhir.value) || 0;
+        const lwbpAkhir = parseFloat(inputs.lwbpAkhir.value) || 0;
+        const kvarhAkhir = parseFloat(inputs.kvarhAkhir.value) || 0;
 
-        if (wbp_akhir < wbp_awal || lwbp_akhir < lwbp_awal || kvarh_akhir < kvarh_awal) {
+        if (wbpAkhir < wbpAwal || lwbpAkhir < lwbpAwal || kvarhAkhir < kvarhAwal) {
             showErrorModal("Data Akhir Bulan harus lebih besar atau sama dengan Data Awal Bulan.");
             return;
         }
+        if (faktorKali <= 0) {
+            showErrorModal("Faktor kali harus berupa angka positif.");
+            return;
+        }
 
-        // --- LOGIKA PERHITUNGAN ---
-        const pem_wbp = (wbp_akhir - wbp_awal) * faktor_kali;
-        const pem_lwbp = (lwbp_akhir - lwbp_awal) * faktor_kali;
-        const pem_kvarh_total = (kvarh_akhir - kvarh_awal) * faktor_kali;
-        const pem_kwh_total = pem_wbp + pem_lwbp;
-        const batas_kvarh = pem_kwh_total * FAKTOR_TAN_PHI;
-        const kelebihan_kvarh = Math.max(0, pem_kvarh_total - batas_kvarh);
+        const tarif = TARIF_DATA.industri;
+        const pemWbp = (wbpAkhir - wbpAwal) * faktorKali;
+        const pemLwbp = (lwbpAkhir - lwbpAwal) * faktorKali;
+        const pemKvarhTotal = (kvarhAkhir - kvarhAwal) * faktorKali;
+        const pemKwhTotal = pemWbp + pemLwbp;
+        const batasKvarh = pemKwhTotal * tarif.faktor_tan_phi;
+        const kelebihanKvarh = Math.max(0, pemKvarhTotal - batasKvarh);
         
-        const biaya_wbp = pem_wbp * HARGA_WBP;
-        const biaya_lwbp = pem_lwbp * HARGA_LWBP;
-        const biaya_kvarh = kelebihan_kvarh * HARGA_KVARH;
+        const biayaWbp = pemWbp * tarif.harga_wbp;
+        const biayaLwbp = pemLwbp * tarif.harga_lwbp;
+        const biayaKvarh = kelebihanKvarh * tarif.harga_kvarh;
 
-        const subtotal_biaya = biaya_wbp + biaya_lwbp + biaya_kvarh;
-        const biaya_ppj = subtotal_biaya * PPJ_RATE;
-        const biaya_materai_final = (subtotal_biaya >= BATAS_MATERAI) ? BIAYA_MATERAI : 0;
-        const total_tagihan = subtotal_biaya + biaya_ppj + biaya_materai_final;
+        const subtotalBiaya = biayaWbp + biayaLwbp + biayaKvarh;
+        const biayaPpj = subtotalBiaya * TARIF_DATA.ppj_persen;
+        const biayaMateraiFinal = (subtotalBiaya >= TARIF_DATA.materai.batas) ? TARIF_DATA.materai.biaya : 0;
+        const totalTagihan = subtotalBiaya + biayaPpj + biayaMateraiFinal;
 
-        // --- PEMBUATAN TAMPILAN HASIL (HTML) ---
         const ringkasanHTML = `
             <div id="industri-tab-ringkasan">
-                <div class="mb-6"><h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Pemakaian</h3><div class="space-y-3"><div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg"><span class="text-slate-600">Pemakaian WBP</span><span class="font-bold text-slate-800 text-base sm:text-lg">${formatAngka(Math.round(pem_wbp))} kWh</span></div><div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg"><span class="text-slate-600">Pemakaian LWBP</span><span class="font-bold text-slate-800 text-base sm:text-lg">${formatAngka(Math.round(pem_lwbp))} kWh</span></div><div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg"><span class="text-slate-600">Total Pemakaian kVARh</span><span class="font-bold text-slate-800 text-base sm:text-lg">${formatAngka(Math.round(pem_kvarh_total))} kVARh</span></div><div class="flex justify-between items-center bg-red-50 text-red-700 p-3 rounded-lg"><span class="font-semibold">Kelebihan Pemakaian kVARh</span><span class="font-bold text-base sm:text-lg">${formatAngka(Math.round(kelebihan_kvarh))} kVARh</span></div></div></div>
-                <div class="mb-6"><h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Biaya</h3><div class="space-y-2 text-slate-700"><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>Biaya Pemakaian WBP</span><span class="font-semibold">${formatRupiah(biaya_wbp)}</span></div><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>Biaya Pemakaian LWBP</span><span class="font-semibold">${formatRupiah(biaya_lwbp)}</span></div><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>Biaya Kelebihan kVARh</span><span class="font-semibold">${formatRupiah(biaya_kvarh)}</span></div><div class="flex justify-between items-center font-bold py-2 border-b-2 border-slate-300"><span>Subtotal Biaya</span><span class="font-semibold">${formatRupiah(subtotal_biaya)}</span></div><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>PPJ (${PPJ_RATE*100}%)</span><span class="font-semibold">${formatRupiah(biaya_ppj)}</span></div><div class="flex justify-between items-center py-2"><span>Biaya Materai</span><span class="font-semibold">${formatRupiah(biaya_materai_final)}</span></div></div></div>
-                <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-4 rounded-xl mt-6"><div class="flex justify-between items-center"><span class="text-lg sm:text-xl font-bold uppercase">Total Tagihan</span><span class="text-lg sm:text-xl font-extrabold tracking-tight">${formatRupiah(total_tagihan)}</span></div></div>
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Pemakaian</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg"><span class="text-slate-600">Pemakaian WBP</span><span class="font-bold text-slate-800">${formatAngka(pemWbp,3)} kWh</span></div>
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg"><span class="text-slate-600">Pemakaian LWBP</span><span class="font-bold text-slate-800">${formatAngka(pemLwbp,3)} kWh</span></div>
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg"><span class="text-slate-600">Total Pemakaian kVARh</span><span class="font-bold text-slate-800">${formatAngka(pemKvarhTotal,3)} kVARh</span></div>
+                        <div class="flex justify-between items-center bg-red-50 text-red-700 p-3 rounded-lg"><span class="font-semibold">Kelebihan Pemakaian kVARh</span><span class="font-bold">${formatAngka(kelebihanKvarh,3)} kVARh</span></div>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Biaya</h3>
+                    <div class="space-y-2 text-slate-700">
+                        <div class="flex justify-between items-center py-2 border-b"><span>Biaya Pemakaian WBP</span><span class="font-semibold">${formatRupiah(biayaWbp)}</span></div>
+                        <div class="flex justify-between items-center py-2 border-b"><span>Biaya Pemakaian LWBP</span><span class="font-semibold">${formatRupiah(biayaLwbp)}</span></div>
+                        <div class="flex justify-between items-center py-2 border-b"><span>Biaya Kelebihan kVARh</span><span class="font-semibold">${formatRupiah(biayaKvarh)}</span></div>
+                        <div class="flex justify-between items-center font-bold py-2 border-b-2"><span>Subtotal Biaya</span><span>${formatRupiah(subtotalBiaya)}</span></div>
+                        <div class="flex justify-between items-center py-2 border-b"><span>PPJ (${(TARIF_DATA.ppj_persen*100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(biayaPpj)}</span></div>
+                        <div class="flex justify-between items-center py-2"><span>Biaya Materai</span><span class="font-semibold">${formatRupiah(biayaMateraiFinal)}</span></div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-4 rounded-xl mt-6"><div class="flex justify-between items-center"><span class="text-lg font-bold uppercase">Total Tagihan</span><span class="text-xl font-extrabold">${formatRupiah(totalTagihan)}</span></div></div>
             </div>`;
         
         const detailHTML = `
             <div id="industri-tab-detail" class="hidden">
                 <div class="space-y-4 text-sm text-slate-600">
-                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold text-slate-800">Pemakaian WBP</p><p class="mt-1 font-mono">(${formatAngka(wbp_akhir,2)}) - ${formatAngka(wbp_awal,2)}) &times; ${formatAngka(faktor_kali,2)} = <strong class="text-slate-900">${formatAngka(pem_wbp,2)} kWh</strong></p></div>
-                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold text-slate-800">Biaya WBP</p><p class="mt-1 font-mono">${formatAngka(pem_wbp,2)} kWh &times; ${formatRupiah(HARGA_WBP)} = <strong class="text-slate-900">${formatRupiah(biaya_wbp)}</strong></p></div>
-                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold text-slate-800">Pemakaian LWBP</p><p class="mt-1 font-mono">(${formatAngka(lwbp_akhir,2)} - ${formatAngka(lwbp_awal,2)}) &times; ${formatAngka(faktor_kali,2)} = <strong class="text-slate-900">${formatAngka(pem_lwbp,2)} kWh</strong></p></div>
-                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold text-slate-800">Biaya LWBP</p><p class="mt-1 font-mono">${formatAngka(pem_lwbp,2)} kWh &times; ${formatRupiah(HARGA_LWBP)} = <strong class="text-slate-900">${formatRupiah(biaya_lwbp)}</strong></p></div>
-                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold text-slate-800">Kelebihan kVARh</p><p class="mt-1 font-mono">Total kVARh: (${formatAngka(kvarh_akhir,2)} - ${formatAngka(kvarh_awal,2)}) &times; ${formatAngka(faktor_kali,2)} = ${formatAngka(pem_kvarh_total,2)}<br>Batas kVARh: (${formatAngka(pem_wbp,2)} + ${formatAngka(pem_lwbp,2)}) &times; ${FAKTOR_TAN_PHI} = ${formatAngka(batas_kvarh,2)}<br>Kelebihan: ${formatAngka(pem_kvarh_total,2)} - ${formatAngka(batas_kvarh,2)} = <strong class="text-red-700">${formatAngka(kelebihan_kvarh,2)} kVARh</strong></p></div>
-                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold text-slate-800">Biaya Kelebihan kVARh</p><p class="mt-1 font-mono">${formatAngka(kelebihan_kvarh,2)} kVARh &times; ${formatRupiah(HARGA_KVARH)} = <strong class="text-slate-900">${formatRupiah(biaya_kvarh)}</strong></p></div>
-                    <div class="p-3 bg-teal-50 rounded-lg border border-teal-200"><p class="font-semibold text-teal-800">Total Tagihan</p><p class="mt-1 font-mono">${formatRupiah(subtotal_biaya)} + ${formatRupiah(biaya_ppj)} + ${formatRupiah(biaya_materai_final)} = <strong class="text-teal-900">${formatRupiah(total_tagihan)}</strong></p></div>
+                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold">Pemakaian WBP</p><p class="mt-1 font-mono">(${formatAngka(wbpAkhir,2)} - ${formatAngka(wbpAwal,2)}) &times; ${formatAngka(faktorKali,0)} = <strong>${formatAngka(pemWbp,3)} kWh</strong></p></div>
+                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold">Biaya WBP</p><p class="mt-1 font-mono">${formatAngka(pemWbp,3)} kWh &times; ${formatRupiah(tarif.harga_wbp, 2)} = <strong>${formatRupiah(biayaWbp)}</strong></p></div>
+                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold">Pemakaian LWBP</p><p class="mt-1 font-mono">(${formatAngka(lwbpAkhir,2)} - ${formatAngka(lwbpAwal,2)}) &times; ${formatAngka(faktorKali,0)} = <strong>${formatAngka(pemLwbp,3)} kWh</strong></p></div>
+                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold">Biaya LWBP</p><p class="mt-1 font-mono">${formatAngka(pemLwbp,3)} kWh &times; ${formatRupiah(tarif.harga_lwbp, 2)} = <strong>${formatRupiah(biayaLwbp)}</strong></p></div>
+                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold">Kelebihan kVARh</p><p class="mt-1 font-mono">Total kVARh: (${formatAngka(kvarhAkhir,2)} - ${formatAngka(kvarhAwal,2)}) &times; ${formatAngka(faktorKali,0)} = ${formatAngka(pemKvarhTotal,3)}<br>Batas kVARh: (${formatAngka(pemWbp,3)} + ${formatAngka(pemLwbp,3)}) &times; ${tarif.faktor_tan_phi} = ${formatAngka(batasKvarh,3)}<br>Kelebihan: ${formatAngka(pemKvarhTotal,3)} - ${formatAngka(batasKvarh,3)} = <strong class="text-red-700">${formatAngka(kelebihanKvarh,3)} kVARh</strong></p></div>
+                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold">Biaya Kelebihan kVARh</p><p class="mt-1 font-mono">${formatAngka(kelebihanKvarh,3)} kVARh &times; ${formatRupiah(tarif.harga_kvarh, 2)} = <strong>${formatRupiah(biayaKvarh)}</strong></p></div>
+                    <div class="p-3 bg-teal-50 rounded-lg border border-teal-200"><p class="font-semibold text-teal-800">Total Tagihan</p><p class="mt-1 font-mono">${formatRupiah(subtotalBiaya)} + ${formatRupiah(biayaPpj)} + ${formatRupiah(biayaMateraiFinal)} = <strong class="text-teal-900">${formatRupiah(totalTagihan)}</strong></p></div>
                 </div>
             </div>`;
 
         hasilSection.innerHTML = `
-            <div class="bg-gradient-to-br from-yellow-300 to-teal-500 p-1 rounded-2xl shadow-lg shadow-slate-200/80 slide-fade-in">
+            <div class="bg-gradient-to-br from-yellow-300 to-teal-500 p-1 rounded-2xl shadow-lg slide-fade-in">
                 <div class="bg-white p-5 sm:p-7 rounded-xl">
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-4">Rincian Estimasi Tagihan</h2>
                     <div class="flex justify-center border-b border-slate-200 mb-6">
@@ -92,36 +102,49 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${ringkasanHTML}
                         ${detailHTML}
                     </div>
-                    <div class="mt-8"><button class="reset-button w-full bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-300 focus:outline-none focus:ring-4 focus:ring-slate-200 transition-all duration-300">Hitung Ulang</button></div>
+                    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button class="reset-button w-full bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-300">Hitung Ulang</button>
+                        <button id="btn-simpan-industri" class="w-full bg-teal-500 text-white font-bold py-3 px-4 rounded-xl hover:bg-teal-600">Simpan Hasil</button>
+                    </div>
                 </div>
             </div>`;
         
         hasilSection.classList.remove('hidden');
 
-        // --- LOGIKA TAB HASIL (RINGKASAN/DETAIL) ---
-        const resultTabButtons = hasilSection.querySelectorAll('.result-tab-button');
-        const tabRingkasan = hasilSection.querySelector('#industri-tab-ringkasan');
-        const tabDetail = hasilSection.querySelector('#industri-tab-detail');
-        resultTabButtons.forEach(button => {
+        const tabButtons = hasilSection.querySelectorAll('.result-tab-button');
+        tabButtons.forEach(button => {
             button.addEventListener('click', () => {
-                resultTabButtons.forEach(btn => btn.classList.remove('active'));
+                tabButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                if (button.dataset.tab === 'ringkasan') {
-                    tabRingkasan.classList.remove('hidden');
-                    tabDetail.classList.add('hidden');
-                } else {
-                    tabRingkasan.classList.add('hidden');
-                    tabDetail.classList.remove('hidden');
-                }
+                const tabName = button.dataset.tab;
+                hasilSection.querySelector('#industri-tab-ringkasan').classList.toggle('hidden', tabName !== 'ringkasan');
+                hasilSection.querySelector('#industri-tab-detail').classList.toggle('hidden', tabName !== 'detail');
             });
         });
 
-        // --- EVENT LISTENER UNTUK TOMBOL RESET ---
         hasilSection.querySelector('.reset-button').addEventListener('click', () => {
             form.reset();
-            inputs.faktor_kali.value = '400'; 
+            inputs.faktorKali.value = '400'; 
             hasilSection.classList.add('hidden');
-            hasilSection.innerHTML = '';
+        });
+
+        hasilSection.querySelector('#btn-simpan-industri').addEventListener('click', (e) => {
+            const detailHTMLContent = hasilSection.querySelector('#industri-tab-detail').innerHTML;
+            const riwayatItem = {
+                id: `industri-${Date.now()}`,
+                tipe: 'Industri',
+                tanggal: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }),
+                deskripsi: `Total Pemakaian ${formatAngka(pemKwhTotal, 0)} kWh`,
+                total: totalTagihan,
+                detailHTML: detailHTMLContent
+            };
+
+            let riwayat = JSON.parse(localStorage.getItem('riwayatTagihan')) || [];
+            riwayat.unshift(riwayatItem);
+            localStorage.setItem('riwayatTagihan', JSON.stringify(riwayat));
+
+            e.target.textContent = 'Tersimpan!';
+            e.target.disabled = true;
         });
 
         setTimeout(() => hasilSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);

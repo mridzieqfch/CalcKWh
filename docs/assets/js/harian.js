@@ -1,120 +1,181 @@
+// File: assets/js/harian.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ELEMEN DOM ---
-    const form = document.getElementById('form-daya');
+    if (!document.getElementById('content-daya')) return;
+
+    const formTambahPerangkat = document.getElementById('form-tambah-perangkat');
+    const selectGolonganTarif = document.getElementById('daya-golongan-tarif');
+    const tarifDisplay = document.getElementById('daya-tarif-display');
+    const containerDaftarPerangkat = document.getElementById('daftar-perangkat-container');
+    const pesanKosong = document.getElementById('pesan-kosong-perangkat');
     const hasilSection = document.getElementById('hasil-daya');
     const inputs = {
-        tarifKwh: document.getElementById('daya-tarif-kwh'),
+        namaAlat: document.getElementById('daya-nama-alat'),
         dayaWatt: document.getElementById('daya-watt'),
-        jamPerHari: document.getElementById('daya-jam'),
-        jumlahHari: document.getElementById('daya-hari'),
+        jamPakai: document.getElementById('daya-jam'),
     };
 
-    // Keluar jika form tidak ditemukan
-    if (!form) return;
+    let daftarPerangkat = [];
+    let tarifKwhSaatIni = 0;
 
-    // --- EVENT LISTENER UNTUK SUBMIT FORM ---
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    const initGolonganSelect = () => {
+        selectGolonganTarif.innerHTML = '';
+        TARIF_DATA.golongan.forEach(g => {
+            const option = document.createElement('option');
+            option.value = g.tarif_kwh;
+            option.textContent = g.nama;
+            selectGolonganTarif.appendChild(option);
+        });
+        updateTarifDisplay();
+    };
 
-        // --- PENGAMBILAN DAN VALIDASI INPUT ---
-        const hargaPerKwh = parseFloat(inputs.tarifKwh.value) || 0;
-        const dayaWatt = parseFloat(inputs.dayaWatt.value) || 0;
-        const jamPerHari = parseFloat(inputs.jamPerHari.value) || 0;
-        const jumlahHari = parseInt(inputs.jumlahHari.value, 10) || 0;
+    const updateTarifDisplay = () => {
+        tarifKwhSaatIni = parseFloat(selectGolonganTarif.value);
+        tarifDisplay.textContent = `${formatRupiah(tarifKwhSaatIni)}/kWh`;
+        renderDaftarPerangkat();
+    };
 
-        if (hargaPerKwh <= 0 || dayaWatt <= 0 || jamPerHari <= 0 || jumlahHari <= 0) {
-            showErrorModal("Mohon isi semua kolom dengan angka positif yang valid.");
+    const renderDaftarPerangkat = () => {
+        containerDaftarPerangkat.innerHTML = '';
+        if (daftarPerangkat.length === 0) {
+            containerDaftarPerangkat.appendChild(pesanKosong);
+            pesanKosong.classList.remove('hidden');
+            hasilSection.classList.add('hidden');
             return;
         }
 
-        // --- LOGIKA PERHITUNGAN LAMA (JANGAN DIHILANGKAN) ---
-        // const kwhHarian = (dayaWatt * jamPerHari) / 1000.0;
-        // const kwhBulanan = kwhHarian * jumlahHari;
-        // const biayaHarian = Math.round(kwhHarian * hargaPerKwh);
-        // const biayaBulanan = Math.round(kwhBulanan * hargaPerKwh);
-
-        // const kwhHarian = (dayaWatt * jamPerHari) / 1000.0;
-        // const kwhBulanan = kwhHarian * jumlahHari;
-        // const biayaHarianTanpaPPJ = kwhHarian * hargaPerKwh;
-        // const biayaBulananTanpaPPJ = kwhBulanan * hargaPerKwh;
-        // const biayaHarian = Math.round(biayaHarianTanpaPPJ * 1.03);
-        // const biayaBulanan = Math.round(biayaBulananTanpaPPJ * 1.03);
-
-        // --- LOGIKA PERHITUNGAN BARU
-        // --- [PERBAIKAN] LOGIKA PERHITUNGAN TAGIHAN ---
-        // Perhitungan tagihan (pascabayar) menambahkan pajak di atas biaya pemakaian.
-        const ppjPersen = 2.36; // Pajak Penerangan Jalan
-
-        // 1. Hitung pemakaian energi (kWh)
-        const kwhHarian = (dayaWatt * jamPerHari) / 1000.0;
-        const kwhBulanan = kwhHarian * jumlahHari;
-
-        // 2. Hitung biaya energi sebelum pajak
-        const biayaHarianTanpaPPJ = kwhHarian * hargaPerKwh;
-        const biayaBulananTanpaPPJ = kwhBulanan * hargaPerKwh;
-
-        // 3. Hitung besar pajak (PPJ)
-        const ppjHarian = biayaHarianTanpaPPJ * (ppjPersen / 100);
-        const ppjBulanan = biayaBulananTanpaPPJ * (ppjPersen / 100);
-
-        // 4. Hitung total biaya setelah ditambah pajak (dibulatkan)
-        const biayaHarian = Math.round(biayaHarianTanpaPPJ + ppjHarian);
-        const biayaBulanan = Math.round(biayaBulananTanpaPPJ + ppjBulanan);
-
-
-        // --- [PERBAIKAN] PEMBUATAN TAMPILAN HASIL (HTML) ---
-        // "Detail Perhitungan" diubah agar transparan menunjukkan penambahan pajak (PPJ).
-        const hasilHTML = `
-        <div class="bg-gradient-to-br from-yellow-300 to-teal-500 p-1 rounded-2xl shadow-lg shadow-slate-200/80 slide-fade-in">
-            <div class="bg-white p-5 sm:p-7 rounded-xl">
-                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-6">Rincian Biaya Alat</h2>
-                
-                <div class="mb-6">
-                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Detail Perhitungan Biaya</h3>
-                    <div class="space-y-3 text-sm text-slate-600">
-                        <div class="p-3 bg-teal-50 border-2 border-teal-100 rounded-lg">
-                            <p class="font-semibold text-teal-800">Estimasi Biaya Harian</p>
-                            <p class="mt-2 font-mono">${formatAngka(dayaWatt, 0)} W &times; ${formatAngka(jamPerHari)} Jam / 1000 = ${formatAngka(kwhHarian, 3)} kWh</p>
-                            <p class="mt-1 font-mono">${formatAngka(kwhHarian, 3)} &times; ${formatRupiah(hargaPerKwh)} = ${formatRupiah(biayaHarianTanpaPPJ)}</p>
-                            <p class="mt-1 font-mono">Pajak PPJ (${ppjPersen}%): + ${formatRupiah(ppjHarian)}</p>
-                            <hr class="border-dashed border-teal-200 my-1">
-                            <p class="mt-1 font-mono text-base"><strong class="text-slate-900">Total Harian: ${formatRupiah(biayaHarian)}</strong></p>
-                        </div>
-                        <div class="p-3 bg-teal-50 border-2 border-teal-100 rounded-lg">
-                            <p class="font-semibold text-teal-800">Estimasi Biaya Bulanan (${jumlahHari} Hari)</p>
-                            <p class="mt-2 font-mono">Biaya Energi: ${formatAngka(kwhBulanan, 2)} &times; ${formatRupiah(hargaPerKwh)} = ${formatRupiah(biayaBulananTanpaPPJ)}</p>
-                            <p class="mt-1 font-mono">Pajak PPJ (${ppjPersen}%): + ${formatRupiah(ppjBulanan)}</p>
-                            <hr class="border-dashed border-teal-200 my-1">
-                            <p class="mt-1 font-mono text-base"><strong class="text-slate-900">Total Bulanan: ${formatRupiah(biayaBulanan)}</strong></p>
-                        </div>
-                    </div>
+        pesanKosong.classList.add('hidden');
+        daftarPerangkat.forEach((perangkat, index) => {
+            const kwhHarian = (perangkat.watt * perangkat.jam) / 1000;
+            const biayaHarian = kwhHarian * tarifKwhSaatIni;
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'perangkat-item bg-slate-100 p-4 rounded-lg flex justify-between items-center';
+            itemDiv.innerHTML = `
+                <div>
+                    <p class="font-bold text-slate-800">${perangkat.nama}</p>
+                    <p class="text-sm text-slate-600">${perangkat.watt} Watt &times; ${perangkat.jam} Jam/Hari</p>
+                    <p class="text-sm font-semibold text-teal-600">${formatRupiah(biayaHarian)} / hari</p>
                 </div>
+                <button data-index="${index}" class="btn-hapus-perangkat bg-red-100 text-red-600 p-2 rounded-full hover:bg-red-200 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+            `;
+            containerDaftarPerangkat.appendChild(itemDiv);
+        });
+        renderTotalBiaya();
+    };
 
-                <div class="border-t-2 border-dashed border-slate-200 my-6"></div>
-
-                <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-4 rounded-xl">
-                    <div class="flex justify-between items-center">
-                        <span class="text-lg font-bold uppercase">Estimasi Biaya</span>
-                        <span class="text-xl font-extrabold tracking-tight">${formatRupiah(biayaBulanan)}</span>
-                    </div>
-                </div>
-
-                <div class="mt-8"><button class="reset-button w-full bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-300 focus:outline-none focus:ring-4 focus:ring-slate-200 transition-all duration-300">Hitung Ulang</button></div>
-            </div>
-        </div>`;
-
-        hasilSection.innerHTML = hasilHTML;
-        hasilSection.classList.remove('hidden');
-
-        // --- EVENT LISTENER UNTUK TOMBOL RESET ---
-        hasilSection.querySelector('.reset-button').addEventListener('click', () => {
-            form.reset();
-            inputs.tarifKwh.value = '1444.70';
-            inputs.jumlahHari.value = '30';
+    const renderTotalBiaya = () => {
+        if (daftarPerangkat.length === 0) {
             hasilSection.classList.add('hidden');
-            hasilSection.innerHTML = '';
+            return;
+        }
+
+        const totalKwhHarian = daftarPerangkat.reduce((total, p) => total + ((p.watt * p.jam) / 1000), 0);
+        const totalKwhBulanan = totalKwhHarian * 30;
+        const subtotal = totalKwhBulanan * tarifKwhSaatIni;
+        const ppj = subtotal * TARIF_DATA.ppj_persen;
+        const totalBiaya = subtotal + ppj;
+
+        const ringkasanHTML = `
+            <div id="daya-tab-ringkasan">
+                <div class="space-y-2 text-slate-700">
+                    <div class="flex justify-between items-center py-2 border-b"><span>Total Pemakaian Energi</span><span class="font-semibold">${formatAngka(totalKwhBulanan, 2)} kWh/Bulan</span></div>
+                    <div class="flex justify-between items-center py-2 border-b"><span>Biaya Pemakaian</span><span class="font-semibold">${formatRupiah(subtotal)}</span></div>
+                    <div class="flex justify-between items-center py-2"><span>PPJ (${(TARIF_DATA.ppj_persen * 100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(ppj)}</span></div>
+                </div>
+                <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-4 rounded-xl mt-6">
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold uppercase">Total Tagihan</span>
+                        <span class="text-xl font-extrabold">${formatRupiah(totalBiaya)}</span>
+                    </div>
+                </div>
+            </div>`;
+        
+        const detailHTML = `
+            <div id="daya-tab-detail" class="hidden">
+                <div class="space-y-4 text-sm text-slate-600">
+                    ${daftarPerangkat.map(p => {
+                        const kwhBulananPerangkat = (p.watt * p.jam / 1000) * 30;
+                        return `
+                        <div class="p-3 bg-slate-100 rounded-lg">
+                            <p class="font-semibold text-slate-800">${p.nama}</p>
+                            <p class="mt-1 font-mono">(${p.watt}W &times; ${p.jam}Jam &times; 30Hari) / 1000 = <strong class="text-slate-900">${formatAngka(kwhBulananPerangkat, 2)} kWh</strong></p>
+                        </div>
+                    `}).join('')}
+                    <div class="p-3 bg-teal-50 rounded-lg border border-teal-200">
+                        <p class="font-semibold text-teal-800">Total Biaya & Pajak</p>
+                        <p class="mt-1 font-mono">
+                            Subtotal: ${formatAngka(totalKwhBulanan, 2)} kWh &times; ${formatRupiah(tarifKwhSaatIni)} = <strong class="text-teal-900">${formatRupiah(subtotal)}</strong>
+                            <br>
+                            PPJ: ${formatRupiah(subtotal)} &times; ${(TARIF_DATA.ppj_persen * 100).toFixed(1)}% = <strong class="text-teal-900">${formatRupiah(ppj)}</strong>
+                        </p>
+                        <hr class="border-dashed border-teal-200 my-2">
+                        <p class="font-mono text-base">Total: ${formatRupiah(subtotal)} + ${formatRupiah(ppj)} = <strong class="text-teal-900">${formatRupiah(totalBiaya)}</strong></p>
+                    </div>
+                </div>
+            </div>`;
+
+        hasilSection.innerHTML = `
+            <div class="bg-gradient-to-br from-yellow-300 to-teal-500 p-1 rounded-2xl shadow-lg slide-fade-in">
+                <div class="bg-white p-5 sm:p-7 rounded-xl">
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-4">Total Estimasi Biaya</h2>
+                    <div class="flex justify-center border-b border-slate-200 mb-6">
+                        <button data-tab="ringkasan" class="result-tab-button py-2 px-6 active">Ringkasan</button>
+                        <button data-tab="detail" class="result-tab-button py-2 px-6">Detail Perhitungan</button>
+                    </div>
+                    <div id="daya-tab-content">
+                        ${ringkasanHTML}
+                        ${detailHTML}
+                    </div>
+                </div>
+            </div>`;
+        hasilSection.classList.remove('hidden');
+        
+        const tabButtons = hasilSection.querySelectorAll('.result-tab-button');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const tabName = button.dataset.tab;
+                hasilSection.querySelector('#daya-tab-ringkasan').classList.toggle('hidden', tabName !== 'ringkasan');
+                hasilSection.querySelector('#daya-tab-detail').classList.toggle('hidden', tabName !== 'detail');
+            });
         });
 
-        setTimeout(() => hasilSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        setTimeout(() => hasilSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+    };
+
+    selectGolonganTarif.addEventListener('change', updateTarifDisplay);
+
+    formTambahPerangkat.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nama = inputs.namaAlat.value.trim();
+        const watt = parseFloat(inputs.dayaWatt.value);
+        const jam = parseFloat(inputs.jamPakai.value);
+
+        if (!nama || isNaN(watt) || isNaN(jam) || watt <= 0 || jam <= 0) {
+            showErrorModal("Pastikan semua kolom perangkat diisi dengan benar.");
+            return;
+        }
+        if (tarifKwhSaatIni <= 0) {
+            showErrorModal("Silakan pilih golongan tarif terlebih dahulu.");
+            return;
+        }
+
+        daftarPerangkat.push({ nama, watt, jam });
+        renderDaftarPerangkat();
+        formTambahPerangkat.reset();
+        inputs.namaAlat.focus();
     });
+
+    containerDaftarPerangkat.addEventListener('click', (e) => {
+        const hapusButton = e.target.closest('.btn-hapus-perangkat');
+        if (hapusButton) {
+            daftarPerangkat.splice(parseInt(hapusButton.dataset.index, 10), 1);
+            renderDaftarPerangkat();
+        }
+    });
+
+    initGolonganSelect();
 });
