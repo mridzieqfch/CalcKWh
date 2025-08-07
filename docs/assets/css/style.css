@@ -76,6 +76,7 @@ body {
     position: static;
     transform: none;
     padding-left: 0.85rem;
+    flex-shrink: 0; /* Mencegah ikon menyusut */
 }
 .select-input {
     flex-grow: 1;
@@ -88,6 +89,7 @@ body {
     font-size: 1rem;
     color: #1e293b; /* slate-800 */
     cursor: pointer;
+    min-width: 0; /* Perbaikan: Memungkinkan elemen untuk menyusut di bawah ukuran kontennya */
 }
 .select-input:focus {
     outline: none;
@@ -98,6 +100,7 @@ body {
     font-weight: 500;
     color: #475569; /* slate-600 */
     white-space: nowrap;
+    flex-shrink: 0; /* Perbaikan: Mencegah harga menyusut atau turun baris */
 }
 
 /* --- Input Standar (untuk form tambah perangkat) --- */
