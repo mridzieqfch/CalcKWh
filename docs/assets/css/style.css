@@ -41,7 +41,6 @@ body {
     pointer-events: none;
     transition: all 0.2s ease-in-out;
     transform-origin: left top;
-    background-color: #fff; /* Match input background */
     padding: 0 0.25rem;
 }
 /* Efek saat input di-fokus atau terisi */
