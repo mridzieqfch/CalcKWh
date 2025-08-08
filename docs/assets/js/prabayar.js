@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                            (${formatRupiah(nominalBeli)} - ${formatRupiah(ppj)} (PPJ)) / ${formatRupiah(tarifPerKwh)} = <strong class="text-slate-800">${formatAngka(kwhDidapat, 2)} kWh</strong>
                         </div>
                          <p class="text-center text-xs text-slate-500 mt-2 px-2">
-                            *Nominal pembelian dikurangi Pajak Penerangan Jalan (${(ppjPersen * 100).toFixed(1)}%).
+                            *Nominal pembelian dikurangi PPJ (${(ppjPersen * 100).toFixed(1)}%).
                         </p>
                     </div>
 

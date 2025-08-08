@@ -49,19 +49,19 @@ document.addEventListener('DOMContentLoaded', () => {
         summaryContainer.innerHTML = `
             <div class="bg-teal-50 p-4 rounded-lg text-center">
                 <p class="text-sm text-teal-700 font-semibold">Total Riwayat</p>
-                <p class="text-xl font-bold text-teal-900">${riwayat.length}</p>
+                <p class="text-lg font-bold text-teal-900">${riwayat.length}</p>
             </div>
             <div class="bg-blue-50 p-4 rounded-lg text-center">
                 <p class="text-sm text-blue-700 font-semibold">Total Pengeluaran</p>
-                <p class="text-lg font-bold text-blue-900">${formatRupiah(totalPengeluaran)}</p>
+                <p class="text-md font-bold text-blue-900">${formatRupiah(totalPengeluaran)}</p>
             </div>
             <div class="bg-purple-50 p-4 rounded-lg text-center">
                 <p class="text-sm text-purple-700 font-semibold">Rata-Rata/Tagihan</p>
-                <p class="text-lg font-bold text-purple-900">${formatRupiah(rataRata)}</p>
+                <p class="text-md font-bold text-purple-900">${formatRupiah(rataRata)}</p>
             </div>
             <div class="bg-yellow-50 p-4 rounded-lg text-center">
                 <p class="text-sm text-yellow-700 font-semibold">Tagihan Tertinggi</p>
-                <p class="text-lg font-bold text-yellow-900">${formatRupiah(tagihanTertinggi)}</p>
+                <p class="text-md font-bold text-yellow-900">${formatRupiah(tagihanTertinggi)}</p>
             </div>
         `;
 
