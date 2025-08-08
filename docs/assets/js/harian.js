@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     if (!document.getElementById('content-daya')) return;
 
+    // Mengambil semua elemen DOM yang dibutuhkan
     const formTambahPerangkat = document.getElementById('form-tambah-perangkat');
     const selectGolonganTarif = document.getElementById('daya-golongan-tarif');
     const tarifDisplay = document.getElementById('daya-tarif-display');
@@ -15,10 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
         dayaWatt: document.getElementById('daya-watt'),
         jamPakai: document.getElementById('daya-jam'),
     };
+    // Elemen untuk fitur simulator
+    const inputAnggaran = document.getElementById('daya-anggaran');
+    const rekomendasiSection = document.getElementById('rekomendasi-daya');
 
     let daftarPerangkat = [];
     let tarifKwhSaatIni = 0;
 
+    // Inisialisasi dropdown golongan tarif
     const initGolonganSelect = () => {
         selectGolonganTarif.innerHTML = '';
         TARIF_DATA.golongan.forEach(g => {
@@ -30,18 +35,62 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTarifDisplay();
     };
 
+    // Memperbarui tampilan tarif saat golongan diganti
     const updateTarifDisplay = () => {
         tarifKwhSaatIni = parseFloat(selectGolonganTarif.value);
         tarifDisplay.textContent = `${formatRupiah(tarifKwhSaatIni)}/kWh`;
         renderDaftarPerangkat();
     };
 
+    // Fungsi untuk menghasilkan rekomendasi penghematan
+    const generateRekomendasi = (selisih, totalBiaya, anggaran) => {
+        let rekomendasiHTML = `
+            <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-lg slide-fade-in">
+                <h3 class="text-lg font-bold text-amber-800">Target Anggaran Terlampaui!</h3>
+                <p class="text-amber-700 mb-4">Estimasi tagihan Anda (${formatRupiah(totalBiaya)}) melebihi target (${formatRupiah(anggaran)}) sebesar <strong class="font-bold">${formatRupiah(selisih)}</strong>. Coba beberapa tips berikut:</p>
+                <ul class="list-disc list-inside space-y-2 text-slate-700 text-sm">`;
+
+        const perangkatBoros = [...daftarPerangkat].sort((a, b) => (b.watt * b.jam) - (a.watt * a.jam));
+
+        if (perangkatBoros.length > 0) {
+            const boros = perangkatBoros[0];
+            if (boros.jam > 1) {
+                const kwhHematPerJam = (boros.watt * 1) / 1000;
+                const biayaHematBulanan = kwhHematPerJam * 30 * tarifKwhSaatIni * (1 + (parseFloat(inputPpj.value) / 100));
+                rekomendasiHTML += `<li>Mengurangi pemakaian <strong>${boros.nama}</strong> sebanyak 1 jam/hari dapat menghemat sekitar <strong>${formatRupiah(biayaHematBulanan)}/bulan</strong>.</li>`;
+            }
+        }
+
+        const lampuPijar = daftarPerangkat.filter(p => p.nama.toLowerCase().includes('lampu') && p.watt >= 25);
+        if (lampuPijar.length > 0) {
+            let totalBiayaLama = 0;
+            let totalBiayaBaru = 0;
+            const wattLampuLED = 8;
+
+            lampuPijar.forEach(lampu => {
+                totalBiayaLama += ((lampu.watt * lampu.jam) / 1000) * 30 * tarifKwhSaatIni;
+                totalBiayaBaru += ((wattLampuLED * lampu.jam) / 1000) * 30 * tarifKwhSaatIni;
+            });
+            
+            const hematDariLampu = (totalBiayaLama - totalBiayaBaru) * (1 + (parseFloat(inputPpj.value) / 100));
+            if (hematDariLampu > 0) {
+                 rekomendasiHTML += `<li>Mengganti ${lampuPijar.length} lampu boros Anda dengan lampu LED (${wattLampuLED} Watt) dapat menghemat sekitar <strong>${formatRupiah(hematDariLampu)}/bulan</strong>.</li>`;
+            }
+        }
+        
+        rekomendasiHTML += `<li>Pastikan untuk selalu mematikan perangkat elektronik yang tidak terpakai dari stopkontak.</li>`;
+        rekomendasiHTML += `</ul></div>`;
+        rekomendasiSection.innerHTML = rekomendasiHTML;
+    };
+
+    // Merender daftar perangkat yang ditambahkan
     const renderDaftarPerangkat = () => {
         containerDaftarPerangkat.innerHTML = '';
         if (daftarPerangkat.length === 0) {
             containerDaftarPerangkat.appendChild(pesanKosong);
             pesanKosong.classList.remove('hidden');
             hasilSection.classList.add('hidden');
+            rekomendasiSection.classList.add('hidden');
             return;
         }
 
@@ -66,13 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTotalBiaya();
     };
 
+    // [DIPERBAIKI] Merender total biaya dan memicu rekomendasi jika perlu
     const renderTotalBiaya = () => {
         if (daftarPerangkat.length === 0) {
             hasilSection.classList.add('hidden');
+            rekomendasiSection.classList.add('hidden');
             return;
         }
 
-        // [PERBAIKAN] Ambil nilai PPJ dari input setiap kali render
         const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         const totalKwhHarian = daftarPerangkat.reduce((total, p) => total + ((p.watt * p.jam) / 1000), 0);
         const totalKwhBulanan = totalKwhHarian * 30;
@@ -80,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const ppj = subtotal * ppjPersen;
         const totalBiaya = subtotal + ppj;
 
+        // [DILENGKAPI] Kode HTML untuk ringkasan
         const ringkasanHTML = `
             <div id="daya-tab-ringkasan">
                 <div class="space-y-2 text-slate-700">
@@ -95,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>`;
         
+        // [DILENGKAPI] Kode HTML untuk detail perhitungan
         const detailHTML = `
             <div id="daya-tab-detail" class="hidden">
                 <div class="space-y-4 text-sm text-slate-600">
@@ -134,6 +186,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>`;
         hasilSection.classList.remove('hidden');
+
+        const anggaran = parseFloat(inputAnggaran.value.replace(/\./g, '')) || 0;
+        rekomendasiSection.innerHTML = '';
+        rekomendasiSection.classList.add('hidden');
+
+        if (anggaran > 0 && totalBiaya > anggaran) {
+            const selisih = totalBiaya - anggaran;
+            generateRekomendasi(selisih, totalBiaya, anggaran);
+            rekomendasiSection.classList.remove('hidden');
+        }
         
         const tabButtons = hasilSection.querySelectorAll('.result-tab-button');
         tabButtons.forEach(button => {
@@ -149,8 +211,15 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => hasilSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
     };
 
+    // Event Listeners
     selectGolonganTarif.addEventListener('change', updateTarifDisplay);
     inputPpj.addEventListener('input', renderDaftarPerangkat);
+
+    inputAnggaran.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+        e.target.value = value ? parseInt(value, 10).toLocaleString('id-ID') : '';
+        renderTotalBiaya();
+    });
 
     formTambahPerangkat.addEventListener('submit', (e) => {
         e.preventDefault();

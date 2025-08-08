@@ -11,14 +11,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- [BARU] Menambahkan library ApexCharts untuk grafik -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body class="bg-teal-50/70 text-slate-800">
 
     <div class="container mx-auto max-w-2xl p-4 sm:p-6 md:p-8">
         
-        <!-- [BARU] Tombol Pusat Informasi -->
         <div class="fixed top-4 right-4 z-20">
             <button id="btn-info-pusat" class="bg-white/70 backdrop-blur-sm w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-teal-600 hover:bg-white hover:text-teal-500 transition-all" title="Pusat Informasi">
                 <i class='bx bxs-info-circle text-3xl'></i>
@@ -81,6 +79,18 @@
                              <button type="submit" class="w-full bg-teal-500 text-white font-semibold py-3 px-4 rounded-xl hover:bg-teal-600 transition-all duration-300 transform hover:scale-[1.02]">Tambah ke Daftar</button>
                         </form>
                     </div>
+
+                    <!-- [BARU] Target Anggaran -->
+                    <div class="mb-8">
+                        <h2 class="text-lg font-bold text-slate-800 mb-3">Target Anggaran & Rekomendasi</h2>
+                        <div class="input-group">
+                            <span class="input-icon text-xl"><i class='bx bxs-wallet mt-1'></i></span>
+                            <input type="text" inputmode="numeric" id="daya-anggaran" placeholder=" " class="floating-input">
+                            <label for="daya-anggaran" class="floating-label">Target Anggaran Bulanan (Rp)</label>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">Isi kolom ini untuk mendapatkan rekomendasi penghematan jika tagihan melebihi target.</p>
+                    </div>
+
                     <div>
                         <h2 class="text-lg font-bold text-slate-800 mb-3">Daftar Perangkat & Estimasi Biaya</h2>
                         <div id="daftar-perangkat-container" class="space-y-3">
@@ -89,9 +99,11 @@
                     </div>
                 </main>
                 <section id="hasil-daya" class="hidden mt-10"></section>
+                <!-- [BARU] Wadah untuk rekomendasi -->
+                <section id="rekomendasi-daya" class="hidden mt-6"></section>
             </div>
 
-            <!-- Kalkulator Prabayar -->
+            <!-- Kalkulator Prabayar (Tidak Berubah) -->
             <div id="content-prabayar" class="hidden">
                 <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
                     <form id="form-prabayar">
@@ -131,7 +143,7 @@
                 <section id="hasil-prabayar" class="hidden mt-10"></section>
             </div>
 
-            <!-- Kalkulator Pascabayar -->
+            <!-- Kalkulator Pascabayar (Tidak Berubah) -->
             <div id="content-pascabayar" class="hidden">
                 <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
                     <form id="form-pascabayar">
@@ -179,7 +191,7 @@
                 <section id="hasil-pascabayar" class="hidden mt-10"></section>
             </div>
 
-            <!-- Kalkulator Industri -->
+            <!-- Kalkulator Industri (Tidak Berubah) -->
             <div id="content-industri" class="hidden">
                 <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
                     <form id="form-industri">
@@ -221,22 +233,17 @@
                 <section id="hasil-industri" class="hidden mt-10"></section>
             </div>
             
-            <!-- [DIUBAH] Halaman Riwayat menjadi Dashboard -->
+            <!-- Halaman Riwayat (Sudah menjadi Dashboard) -->
             <div id="content-riwayat" class="hidden">
                 <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
                     <div class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
-                        <h2 class="text-xl font-bold text-slate-800">Dashboard Riwayat</h2>
+                        <h2 class="text-2xl font-bold text-slate-800">Dashboard Riwayat</h2>
                         <button id="btn-hapus-riwayat" class="bg-red-100 text-red-700 font-semibold py-2 px-4 rounded-lg hover:bg-red-200 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">Hapus Semua</button>
                     </div>
                     
                     <div id="riwayat-dashboard-container" class="space-y-8">
-                        <!-- 1. Kartu Ringkasan akan dirender di sini oleh JS -->
                         <div id="riwayat-summary-cards" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-            
-                        <!-- 2. Grafik akan dirender di sini oleh JS -->
                         <div id="riwayat-chart-container" class="bg-slate-50 p-4 rounded-lg"></div>
-                        
-                        <!-- 3. Tabel data akan dirender di sini oleh JS -->
                         <div class="pt-4">
                             <h3 class="text-xl font-bold text-slate-800 mb-4">Detail Riwayat</h3>
                             <div id="riwayat-table-container" class="overflow-x-auto">
@@ -320,7 +327,6 @@
             
             switchMainTab('daya');
 
-            // --- [BARU] LOGIKA UNTUK PUSAT INFORMASI ---
             const btnInfo = document.getElementById('btn-info-pusat');
             btnInfo.addEventListener('click', () => {
                 const infoContentHTML = `
@@ -330,16 +336,12 @@
                             <dl class="space-y-3">
                                 <dt class="font-semibold text-slate-800">kWh (kiloWatt-hour)</dt>
                                 <dd class="pl-4 text-sm border-l-2 border-teal-200">Satuan energi listrik yang Anda gunakan. 1 kWh berarti Anda menggunakan daya 1.000 Watt selama 1 jam.</dd>
-                                
                                 <dt class="font-semibold text-slate-800">PPJ (Pajak Penerangan Jalan)</dt>
                                 <dd class="pl-4 text-sm border-l-2 border-teal-200">Pajak yang dipungut atas penggunaan listrik untuk mendanai penerangan jalan umum. Persentasenya bervariasi per daerah.</dd>
-                                
                                 <dt class="font-semibold text-slate-800">Biaya Materai</dt>
                                 <dd class="pl-4 text-sm border-l-2 border-teal-200">Dikenakan pada tagihan pascabayar yang melebihi batas tertentu (saat ini ${formatRupiah(TARIF_DATA.materai.batas)}) sebagai pajak dokumen.</dd>
-
                                 <dt class="font-semibold text-slate-800">WBP & LWBP</dt>
                                 <dd class="pl-4 text-sm border-l-2 border-teal-200">Waktu Beban Puncak (WBP) adalah jam-jam sibuk (misal: 18:00-22:00) di mana tarif listrik lebih mahal. Luar Waktu Beban Puncak (LWBP) adalah sisa waktunya dengan tarif lebih murah. Umumnya berlaku untuk pelanggan bisnis dan industri.</dd>
-
                                 <dt class="font-semibold text-slate-800">kVARh (kiloVolt-Ampere Reactive hour)</dt>
                                 <dd class="pl-4 text-sm border-l-2 border-teal-200">Satuan untuk daya reaktif. Jika pemakaian daya reaktif melebihi batas (faktor daya rendah), pelanggan (biasanya industri) akan dikenakan denda/biaya kelebihan kVARh.</dd>
                             </dl>
@@ -354,7 +356,6 @@
                         </div>
                     </div>
                 `;
-                
                 showModal('Pusat Informasi & Edukasi', infoContentHTML);
             });
         });
