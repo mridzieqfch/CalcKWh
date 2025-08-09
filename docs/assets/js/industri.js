@@ -15,12 +15,53 @@ document.addEventListener('DOMContentLoaded', () => {
         lwbpAkhir: document.getElementById('industri-lwbp-akhir'),
         kvarhAkhir: document.getElementById('industri-kvarh-akhir'),
     };
+    const reminderToggle = document.getElementById('industri-reminder-toggle');
+    // ▼▼▼ KODE BARU ▼▼▼
+    const reminderDateContainer = document.getElementById('industri-reminder-date-container');
+    const reminderDateInput = document.getElementById('industri-reminder-date');
+    // ▲▲▲ KODE BARU ▲▲▲
+
+    // ▼▼▼ FUNGSI DIPERBAIKI ▼▼▼
+    const setupReminder = () => {
+        const savedReminder = JSON.parse(localStorage.getItem('industriReminder')) || { enabled: false, date: 25 };
+        
+        reminderToggle.checked = savedReminder.enabled;
+        reminderDateInput.value = savedReminder.date;
+
+        if (savedReminder.enabled) {
+            reminderDateContainer.classList.remove('hidden');
+        } else {
+            reminderDateContainer.classList.add('hidden');
+        }
+
+        reminderToggle.addEventListener('change', () => {
+            const isEnabled = reminderToggle.checked;
+            reminderDateContainer.classList.toggle('hidden', !isEnabled);
+            saveReminderSettings();
+        });
+
+        reminderDateInput.addEventListener('change', () => {
+            let date = parseInt(reminderDateInput.value, 10);
+            if (isNaN(date) || date < 1) date = 1;
+            if (date > 28) date = 28;
+            reminderDateInput.value = date;
+            saveReminderSettings();
+        });
+    };
+
+    const saveReminderSettings = () => {
+        const settings = {
+            enabled: reminderToggle.checked,
+            date: parseInt(reminderDateInput.value, 10) || 25
+        };
+        localStorage.setItem('industriReminder', JSON.stringify(settings));
+    };
+    // ▲▲▲ FUNGSI DIPERBAIKI ▲▲▲
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const faktorKali = parseFloat(inputs.faktorKali.value) || 0;
-        // [PERBAIKAN] Ambil nilai PPJ dari input setiap kali submit
         const ppjPersen = (parseFloat(inputs.ppj.value) || 0) / 100;
         const wbpAwal = parseFloat(inputs.wbpAwal.value) || 0;
         const lwbpAwal = parseFloat(inputs.lwbpAwal.value) || 0;
@@ -81,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="flex justify-between items-center py-2"><span>Biaya Materai</span><span class="font-semibold">${formatRupiah(biayaMateraiFinal)}</span></div>
                     </div>
                 </div>
-                <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-4 rounded-xl mt-6"><div class="flex justify-between items-center"><span class="text-lg font-bold uppercase">Total Tagihan</span><span class="text-xl font-extrabold">${formatRupiah(totalTagihan)}</span></div></div>
+                <div class="bg-gradient-to-br from-yellow-400/80 via-teal-500 to-teal-500 text-white p-4 rounded-xl mt-6"><div class="flex justify-between items-center"><span class="text-lg font-bold uppercase">Total Tagihan</span><span class="text-xl font-extrabold">${formatRupiah(totalTagihan)}</span></div></div>
             </div>`;
         
         const detailHTML = `
@@ -137,14 +178,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         hasilSection.querySelector('#btn-simpan-industri').addEventListener('click', (e) => {
-            const detailHTMLContent = hasilSection.querySelector('#industri-tab-detail').innerHTML;
             const riwayatItem = {
                 id: `industri-${Date.now()}`,
                 tipe: 'Industri',
                 tanggal: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }),
-                deskripsi: `Total Pemakaian ${formatAngka(pemKwhTotal, 0)} kWh`,
+                deskripsi: `WBP+LWBP`,
                 total: totalTagihan,
-                detailHTML: detailHTMLContent
+                kwh: pemKwhTotal,
+                detailHTML: hasilSection.querySelector('#industri-tab-detail').innerHTML
             };
 
             let riwayat = JSON.parse(localStorage.getItem('riwayatTagihan')) || [];
@@ -157,4 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => hasilSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     });
+    
+    setupReminder();
 });

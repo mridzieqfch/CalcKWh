@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Listrik</title>
+    <title>Kalkulator Listrik Cerdas</title>
     <link rel="icon" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/duotone/calculator.svg" type="image/svg+xml">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,46 +15,47 @@
 </head>
 <body class="bg-teal-50/70 text-slate-800">
 
+    <div id="reminder-banner" class="hidden sticky top-0 z-50 bg-yellow-400 text-yellow-900 p-3 text-center text-sm font-semibold shadow-lg">
+        <span id="reminder-text"></span>
+        <button id="close-reminder" class="absolute top-1/2 right-4 -translate-y-1/2 font-bold text-xl">&times;</button>
+    </div>
+
     <div class="container mx-auto max-w-2xl p-4 sm:p-6 md:p-8">
         
-        <div class="fixed top-4 right-4 z-20">
-            <button id="btn-info-pusat" class="bg-white/70 backdrop-blur-sm w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-teal-600 hover:bg-white hover:text-teal-500 transition-all" title="Pusat Informasi">
+        <div class="fixed top-4 right-4 z-20 flex items-center gap-2">
+            <button id="btn-info-pusat" class="bg-white/70 backdrop-blur-sm w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-teal-600 hover:bg-white transition-all" title="Pusat Informasi">
                 <i class='bx bxs-info-circle text-3xl'></i>
             </button>
         </div>
 
-        <!-- Header -->
         <header class="text-center mb-8">
-            <div class="inline-block bg-gradient-to-br from-yellow-300 to-teal-500 text-white p-1 rounded-full mb-4 shadow-lg shadow-teal-600/50">
+            <div class="inline-block bg-gradient-to-br from-yellow-300 to-teal-500 text-white p-1 rounded-full mb-4 shadow-lg shadow-teal-600/20">
                 <div class="bg-white rounded-full p-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-[70px] h-[70px] fill-current text-teal-600" viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet"><g transform="translate(0,300) scale(0.1,-0.1)" stroke="none"><path d="M1271 2686 c-15 -18 -9 -31 65 -134 59 -82 73 -117 55 -135 -7 -7 -60 -14 -134 -17 -114 -5 -122 -6 -125 -26 -2 -13 39 -80 115 -188 65 -92 144 -205 176 -250 l58 -83 68 -7 c266 -24 495 -221 561 -482 24 -95 26 -227 4 -321 -47 -202 -215 -389 -414 -460 -60 -22 -98 -28 -191 -31 -175 -6 -289 30 -428 134 -72 54 -165 172 -200 253 -78 181 -65 418 32 583 61 105 162 200 269 254 27 13 48 29 48 35 0 17 -100 159 -112 159 -26 0 -154 -86 -220 -148 -178 -168 -269 -377 -270 -617 0 -243 83 -442 256 -615 128 -127 255 -195 436 -232 208 -44 451 5 635 127 264 176 412 489 377 800 -42 376 -315 678 -682 754 -49 10 -59 16 -83 53 -53 82 -37 98 104 98 123 0 139 4 139 34 -1 21 -241 369 -303 439 l-34 37 -95 0 c-71 0 -99 -4 -107 -14z"/><path d="M1150 1331 c-15 -28 -13 -254 2 -269 7 -7 36 -12 65 -12 68 0 73 10 73 150 0 141 -4 150 -75 150 -43 0 -56 -4 -65 -19z"/><path d="M1681 1331 c-6 -11 -11 -73 -11 -139 0 -140 3 -145 82 -140 l53 3 5 60 c3 33 3 98 0 145 l-5 85 -57 3 c-48 3 -58 0 -67 -17z"/></g></svg>
                 </div>
             </div>
             <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Kalkulator Listrik</h1>
-            <p class="text-slate-600 mt-3 max-w-xl mx-auto">Platform untuk menghitung estimasi biaya perangkat, pembelian token, tagihan bulanan, dan riwayat Tagihan Listrik.</p>
+            <p class="text-slate-600 mt-3 max-w-xl mx-auto">Platform untuk menghitung estimasi biaya perangkat, pembelian token, tagihan bulanan, dan riwayat estimasi tagihan listrik.</p>
         </header>
 
-        <!-- Main Tab Navigation -->
         <nav class="mb-1">
             <div class="bg-gradient-to-b from-yellow-200/20 to-teal-200/50 p-1.5 rounded-xl flex justify-center items-center gap-1 sm:gap-2 max-w-full mx-auto mb-2 shadow-md shadow-teal-600/30">
-                <button data-tab="daya" class="main-tab-button active py-2.5 px-2 sm:px-4 text-xs sm:text-base">Perangkat</button>
-                <button data-tab="prabayar" class="main-tab-button py-2.5 px-2 sm:px-4 text-xs sm:text-base">Prabayar</button>
-                <button data-tab="pascabayar" class="main-tab-button py-2.5 px-2 sm:px-4 text-xs sm:text-base">Pascabayar</button>
-                <button data-tab="industri" class="main-tab-button py-2.5 px-2 sm:px-4 text-xs sm:text-base">Industri</button>
-                <button data-tab="riwayat" class="main-tab-button bg-gradient-to-bl from-teal-200/80 to-yellow-200/50 py-2.5 px-2 sm:px-4 text-xs sm:text-base">Riwayat</button>
+                <button data-tab="daya" class="main-tab-button active">Perangkat</button>
+                <button data-tab="prabayar" class="main-tab-button">Prabayar</button>
+                <button data-tab="pascabayar" class="main-tab-button">Pascabayar</button>
+                <button data-tab="industri" class="main-tab-button">Industri</button>
+                <button data-tab="riwayat" class="main-tab-button bg-gradient-to-bl from-teal-200/80 to-yellow-200/50">Dashboard</button>
             </div>
         </nav>
 
-        <!-- Container for Tab Content -->
         <div>
-            <!-- Kalkulator Perangkat -->
             <div id="content-daya">
-                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-8 mb-8">
+                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/20">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8 mb-8">
                         <div>
                             <h2 class="text-lg font-bold text-slate-800 mb-3">Golongan Tarif</h2>
                             <div class="select-group">
-                                 <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt mt-1'></i></span>
+                                 <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt'></i></span>
                                  <select id="daya-golongan-tarif" class="select-input"></select>
                                  <span id="daya-tarif-display" class="select-tarif-display"></span>
                             </div>
@@ -62,7 +63,7 @@
                         <div>
                             <h2 class="text-lg font-bold text-slate-800 mb-3">PPJ</h2>
                              <div class="input-group">
-                                <span class="input-icon text-xl"><i class='bx bxs-badge-dollar mt-1'></i></span>
+                                <span class="input-icon text-xl"><i class='bx bxs-badge-dollar'></i></span>
                                 <input type="number" id="daya-ppj" value="3" placeholder=" " step="any" class="floating-input">
                                 <label for="daya-ppj" class="floating-label">PPJ (%)</label>
                             </div>
@@ -72,25 +73,34 @@
                         <h2 class="text-lg font-bold text-slate-800 mb-3">Tambah Perangkat ke Daftar</h2>
                         <form id="form-tambah-perangkat" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <input type="text" id="daya-nama-alat" placeholder="Nama Alat (e.g., AC)" class="form-input-std" required>
-                                <input type="number" id="daya-watt" placeholder="Daya (Watt)" class="form-input-std" required>
-                                <input type="number" step="any" id="daya-jam" placeholder="Jam Pakai/Hari" class="form-input-std" required>
+                               <div class="input-group">
+                                    <span class="input-icon"><i class='bx bxs-devices'></i></span>
+                                    <input type="text" id="daya-nama-alat" placeholder=" " class="floating-input" required>
+                                    <label for="daya-nama-alat" class="md:text-md floating-label">Nama Alat</label>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-icon"><i class='bx bxs-zap'></i></span>
+                                    <input type="number" id="daya-watt" placeholder=" " class="floating-input" required>
+                                    <label for="daya-watt" class="md:text-md floating-label">Daya (Watt)</label>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-icon"><i class='bx bxs-time-five'></i></span>
+                                    <input type="number" step="any" id="daya-jam" placeholder=" " class="floating-input" required>
+                                    <label for="daya-jam" class="md:text-sm floating-label">Jam Pakai/Hari</label>
+                                </div>
                             </div>
                              <button type="submit" class="w-full bg-teal-500 text-white font-semibold py-3 px-4 rounded-xl hover:bg-teal-600 transition-all duration-300 transform hover:scale-[1.02]">Tambah ke Daftar</button>
                         </form>
                     </div>
-
-                    <!-- [BARU] Target Anggaran -->
                     <div class="mb-8">
                         <h2 class="text-lg font-bold text-slate-800 mb-3">Target Anggaran & Rekomendasi</h2>
                         <div class="input-group">
-                            <span class="input-icon text-xl"><i class='bx bxs-wallet mt-1'></i></span>
+                            <span class="input-icon text-xl"><i class='bx bxs-wallet'></i></span>
                             <input type="text" inputmode="numeric" id="daya-anggaran" placeholder=" " class="floating-input">
                             <label for="daya-anggaran" class="floating-label">Target Anggaran Bulanan (Rp)</label>
                         </div>
                         <p class="text-xs text-slate-500 mt-2">Isi kolom ini untuk mendapatkan rekomendasi penghematan jika tagihan melebihi target.</p>
                     </div>
-
                     <div>
                         <h2 class="text-lg font-bold text-slate-800 mb-3">Daftar Perangkat & Estimasi Biaya</h2>
                         <div id="daftar-perangkat-container" class="space-y-3">
@@ -99,20 +109,18 @@
                     </div>
                 </main>
                 <section id="hasil-daya" class="hidden mt-10"></section>
-                <!-- [BARU] Wadah untuk rekomendasi -->
                 <section id="rekomendasi-daya" class="hidden mt-6"></section>
             </div>
 
-            <!-- Kalkulator Prabayar (Tidak Berubah) -->
             <div id="content-prabayar" class="hidden">
-                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
+                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/20">
                     <form id="form-prabayar">
                         <div class="space-y-8">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-8">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
                                 <div>
                                     <h2 class="text-lg font-bold text-slate-800 mb-3">Golongan Tarif</h2>
                                     <div class="select-group">
-                                        <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt mt-1'></i></span>
+                                        <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt'></i></span>
                                         <select id="prabayar-golongan-tarif" class="select-input"></select>
                                         <span id="prabayar-tarif-display" class="select-tarif-display"></span>
                                    </div>
@@ -120,16 +128,16 @@
                                 <div>
                                     <h2 class="text-lg font-bold text-slate-800 mb-3">PPJ</h2>
                                      <div class="input-group">
-                                        <span class="input-icon text-xl"><i class='bx bxs-badge-dollar mt-1'></i></span>
+                                        <span class="input-icon text-xl"><i class='bx bxs-badge-dollar'></i></span>
                                         <input type="number" id="prabayar-ppj" value="3" placeholder=" " step="any" class="floating-input">
                                         <label for="prabayar-ppj" class="floating-label">PPJ (%)</label>
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <h2 class="text-lg font-bold text-slate-800 mb-4">Nominal Pembelian</h2>
+                                <h2 class="text-lg font-bold text-slate-800 mb-3">Nominal Pembelian</h2>
                                 <div class="input-group">
-                                    <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></span>
+                                    <span class="input-icon"><i class='bx bxs-wallet-alt'></i></span>
                                     <input type="text" inputmode="numeric" id="prabayar-nominal-beli" placeholder=" " class="floating-input" required>
                                     <label for="prabayar-nominal-beli" class="floating-label">Nominal Beli (Rp)</label>
                                 </div>
@@ -143,15 +151,14 @@
                 <section id="hasil-prabayar" class="hidden mt-10"></section>
             </div>
 
-            <!-- Kalkulator Pascabayar (Tidak Berubah) -->
             <div id="content-pascabayar" class="hidden">
-                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
+                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/20">
                     <form id="form-pascabayar">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-8 mb-8">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8 mb-8">
                             <div>
                                 <h2 class="text-lg font-bold text-slate-800 mb-3">Golongan Tarif</h2>
                                 <div class="select-group">
-                                    <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt mt-1'></i></span>
+                                    <span class="input-icon text-xl"><i class='bx bxs-purchase-tag-alt'></i></span>
                                     <select id="pascabayar-golongan-tarif" class="select-input"></select>
                                     <span id="pascabayar-tarif-display" class="select-tarif-display"></span>
                                </div>
@@ -159,30 +166,43 @@
                             <div>
                                 <h2 class="text-lg font-bold text-slate-800 mb-3">PPJ</h2>
                                  <div class="input-group">
-                                    <span class="input-icon text-xl"><i class='bx bxs-badge-dollar mt-1'></i></span>
+                                    <span class="input-icon text-xl"><i class='bx bxs-badge-dollar'></i></span>
                                     <input type="number" id="pascabayar-ppj" value="3" placeholder=" " step="any" class="floating-input">
                                     <label for="pascabayar-ppj" class="floating-label">PPJ (%)</label>
                                 </div>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-x-4 gap-y-8">
-                            <div class="space-y-4">
-                                <h2 class="text-lg font-bold text-slate-800">Data Awal</h2>
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800 mb-3">Data Awal</h2>
                                 <div class="input-group">
-                                    <span class="input-icon text-2xl"><i class='bx bx-bolt-circle mt-2'></i></span>
+                                    <span class="input-icon text-2xl"><i class='bx bx-bolt-circle'></i></span>
                                     <input type="number" id="pascabayar-kwh-awal" placeholder=" " step="any" class="floating-input" required>
                                     <label for="pascabayar-kwh-awal" class="floating-label">Meter Awal</label>
                                 </div>
                             </div>
-                            <div class="space-y-4">
-                                <h2 class="text-lg font-bold text-slate-800">Data Akhir</h2>
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800 mb-3">Data Akhir</h2>
                                 <div class="input-group">
-                                    <span class="input-icon text-2xl"><i class='bx bx-bolt-circle mt-2'></i></span>
+                                    <span class="input-icon text-2xl"><i class='bx bx-bolt-circle'></i></span>
                                     <input type="number" id="pascabayar-kwh-akhir" placeholder=" " step="any" class="floating-input" required>
                                     <label for="pascabayar-kwh-akhir" class="floating-label">Meter Akhir</label>
                                 </div>
                             </div>
                         </div>
+                        <div class="mt-8 bg-slate-50 p-4 rounded-lg space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label for="pascabayar-reminder-toggle" class="font-medium text-slate-700 cursor-pointer">Aktifkan pengingat catat meter</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="pascabayar-reminder-toggle" class="toggle-input">
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </div>
+                            <div id="pascabayar-reminder-date-container" class="hidden pt-3 border-t border-slate-200">
+                                <label for="pascabayar-reminder-date" class="text-sm font-medium text-slate-600 mb-2 block">Ingatkan saya setiap tanggal:</label>
+                                <input type="number" id="pascabayar-reminder-date" min="1" max="28" class="form-input-std w-24 text-center">
+                            </div>
+                            </div>
                         <div class="mt-10">
                           <button type="submit" class="w-full bg-teal-500 text-white font-bold py-4 px-4 rounded-xl hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-500/50 transition-all duration-300 transform hover:scale-[1.02]">Hitung Estimasi Biaya</button>
                         </div>
@@ -191,15 +211,14 @@
                 <section id="hasil-pascabayar" class="hidden mt-10"></section>
             </div>
 
-            <!-- Kalkulator Industri (Tidak Berubah) -->
             <div id="content-industri" class="hidden">
-                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
+                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/20">
                     <form id="form-industri">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-8 mb-8">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8 mb-8">
                              <div>
-                                <h2 class="text-lg font-bold text-slate-800 mb-3">Faktor Kali (x)</h2>
+                                <h2 class="text-lg font-bold text-slate-800 mb-3">Faktor Kali</h2>
                                 <div class="input-group">
-                                    <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16.98h.01"/><path d="M18 16.98h.01"/><path d="M18 16.98h.01"/><path d="M18 16.98h.01"/><path d="M6 16.98h.01"/><path d="M12 16.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="M12 11.98h.01"/><path d="m6 12 6-6 6 6"/><path d="M12 17v5"/><path d="M12 7V2"/></svg></span>
+                                    <span class="input-icon"><i class='bx bx-x'></i></span>
                                     <input type="number" id="industri-faktor-kali" value="400" placeholder=" " step="any" class="floating-input">
                                     <label for="industri-faktor-kali" class="floating-label">Faktor Kali (x)</label>
                                 </div>
@@ -207,43 +226,96 @@
                             <div>
                                 <h2 class="text-lg font-bold text-slate-800 mb-3">PPJ</h2>
                                  <div class="input-group">
-                                    <span class="input-icon text-xl"><i class='bx bxs-badge-dollar mt-1'></i></span>
+                                    <span class="input-icon text-xl"><i class='bx bxs-badge-dollar'></i></span>
                                     <input type="number" id="industri-ppj" value="3" placeholder=" " step="any" class="floating-input">
                                     <label for="industri-ppj" class="floating-label">PPJ (%)</label>
                                 </div>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-x-4 gap-y-8">
-                            <div class="space-y-4">
-                                <h2 class="text-lg font-bold text-slate-800">Data Awal</h2>
-                                <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle mt-2'></i></span><input type="number" id="industri-wbp-awal" placeholder=" " step="any" class="floating-input"><label for="industri-wbp-awal" class="floating-label">WBP Awal</label></div>
-                                <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle mt-2'></i></span><input type="number" id="industri-lwbp-awal" placeholder=" " step="any" class="floating-input"><label for="industri-lwbp-awal" class="floating-label">LWBP Awal</label></div>
-                                <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle mt-2'></i></span><input type="number" id="industri-kvarh-awal" placeholder=" " step="any" class="floating-input"><label for="industri-kvarh-awal" class="floating-label">kVARh Awal</label></div>
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800 mb-2">Data Awal</h2>
+                                <div class="space-y-4">
+                                    <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle'></i></span><input type="number" id="industri-wbp-awal" placeholder=" " step="any" class="floating-input"><label for="industri-wbp-awal" class="floating-label">WBP Awal</label></div>
+                                    <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle'></i></span><input type="number" id="industri-lwbp-awal" placeholder=" " step="any" class="floating-input"><label for="industri-lwbp-awal" class="floating-label">LWBP Awal</label></div>
+                                    <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle'></i></span><input type="number" id="industri-kvarh-awal" placeholder=" " step="any" class="floating-input"><label for="industri-kvarh-awal" class="floating-label">kVARh Awal</label></div>
+                                </div>
                             </div>
-                            <div class="space-y-4">
-                                <h2 class="text-lg font-bold text-slate-800">Data Akhir</h2>
-                                <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle mt-2'></i></span><input type="number" id="industri-wbp-akhir" placeholder=" " step="any" class="floating-input"><label for="industri-wbp-akhir" class="floating-label">WBP Akhir</label></div>
-                                <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle mt-2'></i></span><input type="number" id="industri-lwbp-akhir" placeholder=" " step="any" class="floating-input"><label for="industri-lwbp-akhir" class="floating-label">LWBP Akhir</label></div>
-                                <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle mt-2'></i></span><input type="number" id="industri-kvarh-akhir" placeholder=" " step="any" class="floating-input"><label for="industri-kvarh-akhir" class="floating-label">kVARh Akhir</label></div>
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800 mb-2">Data Akhir</h2>
+                                <div class="space-y-4">
+                                    <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle'></i></span><input type="number" id="industri-wbp-akhir" placeholder=" " step="any" class="floating-input"><label for="industri-wbp-akhir" class="floating-label">WBP Akhir</label></div>
+                                    <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle'></i></span><input type="number" id="industri-lwbp-akhir" placeholder=" " step="any" class="floating-input"><label for="industri-lwbp-akhir" class="floating-label">LWBP Akhir</label></div>
+                                    <div class="input-group"><span class="input-icon text-2xl"><i class='bx bx-bolt-circle'></i></span><input type="number" id="industri-kvarh-akhir" placeholder=" " step="any" class="floating-input"><label for="industri-kvarh-akhir" class="floating-label">kVARh Akhir</label></div>
+                                </div>
                             </div>
                         </div>
+                        <div class="mt-8 bg-slate-50 p-4 rounded-lg space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label for="industri-reminder-toggle" class="font-medium text-slate-700 cursor-pointer">Aktifkan pengingat catat meter</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="industri-reminder-toggle" class="toggle-input">
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </div>
+                             <div id="industri-reminder-date-container" class="hidden pt-3 border-t border-slate-200">
+                                <label for="industri-reminder-date" class="text-sm font-medium text-slate-600 mb-2 block">Ingatkan saya setiap tanggal:</label>
+                                <input type="number" id="industri-reminder-date" min="1" max="28" class="form-input-std w-24 text-center">
+                            </div>
+                            </div>
                         <div class="mt-10"><button type="submit" class="w-full bg-teal-500 text-white font-bold py-4 px-4 rounded-xl hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-500/50 transition-all duration-300 transform hover:scale-[1.02]">Hitung Estimasi Biaya</button></div>
                     </form>
                 </main>
                 <section id="hasil-industri" class="hidden mt-10"></section>
             </div>
             
-            <!-- Halaman Riwayat (Sudah menjadi Dashboard) -->
             <div id="content-riwayat" class="hidden">
-                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/30">
-                    <div class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
-                        <h2 class="text-xl font-bold text-slate-800">Dashboard Riwayat</h2>
-                        <button id="btn-hapus-riwayat" class="bg-red-100 text-red-700 font-semibold py-2 px-4 rounded-lg hover:bg-red-200 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">Hapus Semua</button>
+                <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg shadow-teal-600/20">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 border-b border-slate-200 pb-4 gap-4">
+                        <h2 class="text-xl font-bold text-slate-800">Dashboard Analisis</h2>
+                        <button id="btn-hapus-riwayat" class="bg-red-100 text-red-700 font-semibold py-2 px-4 rounded-lg hover:bg-red-200 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed self-start sm:self-center">Hapus Semua</button>
                     </div>
                     
                     <div id="riwayat-dashboard-container" class="space-y-8">
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-3">Target Tagihan Bulanan</h3>
+                            <div class="flex flex-col sm:flex-row items-center gap-4">
+                                <div class="input-group w-full sm:w-auto flex-grow">
+                                    <span class="input-icon text-xl"><i class='bx bxs-flag-checkered'></i></span>
+                                    <input type="text" inputmode="numeric" id="input-target-anggaran" placeholder=" " class="floating-input">
+                                    <label for="input-target-anggaran" class="floating-label">Set Target (Rp)</label>
+                                </div>
+                                <button id="btn-simpan-target" class="w-full sm:w-auto bg-teal-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-teal-600 transition">Simpan Target</button>
+                            </div>
+                            <div id="target-progress-container" class="mt-4 hidden">
+                                <div class="flex justify-between text-sm font-medium text-slate-600 mb-1">
+                                    <span>Tagihan Terakhir</span>
+                                    <span id="target-progress-label"></span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2.5">
+                                    <div id="target-progress-bar" class="bg-gradient-to-r from-teal-400 to-cyan-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="riwayat-summary-cards" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-                        <div id="riwayat-chart-container" class="bg-slate-50 p-4 rounded-lg"></div>
+                        
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                             <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-bold text-slate-800">Grafik Tren Pengeluaran</h3>
+                                <div class="bg-slate-200 text-sm p-1 rounded-lg flex items-center">
+                                    <button data-chart="rupiah" class="chart-type-button active px-3 py-1">Rp</button>
+                                    <button data-chart="kwh" class="chart-type-button px-3 py-1">kWh</button>
+                                </div>
+                             </div>
+                            <div id="riwayat-chart-container"></div>
+                        </div>
+
+                        <div id="analisis-perangkat-container" class="hidden">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">Analisis Perangkat Paling Boros</h3>
+                            <div id="analisis-perangkat-content" class="p-4 bg-slate-50 rounded-lg"></div>
+                        </div>
+
                         <div class="pt-4">
                             <h3 class="text-xl font-bold text-slate-800 mb-4">Detail Riwayat</h3>
                             <div id="riwayat-table-container" class="overflow-x-auto">
@@ -255,13 +327,11 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <footer class="text-center mt-12 text-slate-500 text-sm">
-            <p>&copy; 2025 - Credit by Aping Kadut 🐍.</p>
+            <p>&copy; 2025 - Credit by Aping Kadut 錐.</p>
         </footer>
     </div>
 
-    <!-- Script Utama Untuk Tab Navigasi & Fungsi -->
     <script>
         // --- FUNGSI UTILITAS GLOBAL ---
         const formatAngka = (angka, desimal = 2) => {
@@ -284,7 +354,7 @@
                         <h3 class="text-lg font-bold text-slate-800">${title}</h3>
                         <button class="modal-close-button text-slate-400 hover:text-slate-700 text-3xl font-bold leading-none">&times;</button>
                     </div>
-                    <div class="p-4 sm:p-6 max-h-[70vh] overflow-y-auto">${contentHTML}</div>
+                    <div class="p-4 sm:p-6 max-h-[70vh] overflow-y-auto text-slate-700">${contentHTML}</div>
                 </div>`;
             document.body.appendChild(modal);
             
@@ -295,9 +365,9 @@
                 }
             });
         };
-        const showErrorModal = (message) => showModal('<span class="text-red-600">Input Tidak Valid</span>', `<p class="text-slate-600">${message}</p>`);
+        const showErrorModal = (message) => showModal('<span class="text-red-600">Input Tidak Valid</span>', `<p>${message}</p>`);
 
-        // --- LOGIKA TAB NAVIGASI UTAMA ---
+        // --- LOGIKA UTAMA ---
         document.addEventListener('DOMContentLoaded', () => {
             const mainTabButtons = document.querySelectorAll('.main-tab-button');
             const tabContents = {
@@ -325,12 +395,56 @@
                 button.addEventListener('click', () => switchMainTab(button.dataset.tab));
             });
             
-            switchMainTab('daya');
+            const reminderBanner = document.getElementById('reminder-banner');
+            const reminderText = document.getElementById('reminder-text');
+            const closeReminderBtn = document.getElementById('close-reminder');
+            
+            // ▼▼▼ FUNGSI DIPERBAIKI ▼▼▼
+            const checkReminders = () => {
+                const today = new Date();
+                const date = today.getDate();
+                const month = today.getMonth();
+                
+                const lastReminderShown = localStorage.getItem('lastReminderMonth');
+                if (lastReminderShown && parseInt(lastReminderShown) === month) {
+                    return;
+                }
+                
+                // Baca data dari localStorage dan parse sebagai JSON
+                const pascabayarReminderData = JSON.parse(localStorage.getItem('pascabayarReminder'));
+                const industriReminderData = JSON.parse(localStorage.getItem('industriReminder'));
+
+                const pascabayarReminder = pascabayarReminderData && pascabayarReminderData.enabled && date >= pascabayarReminderData.date;
+                const industriReminder = industriReminderData && industriReminderData.enabled && date >= industriReminderData.date;
+                
+                let reminderMessage = '';
+
+                if (pascabayarReminder && industriReminder) {
+                    reminderMessage = '窓 Waktunya catat meter akhir bulan untuk tagihan Pascabayar & Industri Anda!';
+                } else if (pascabayarReminder) {
+                    reminderMessage = '窓 Waktunya catat meter akhir bulan untuk tagihan Pascabayar Anda!';
+                } else if (industriReminder) {
+                    reminderMessage = '窓 Waktunya catat meter akhir bulan untuk tagihan Industri Anda!';
+                }
+
+                if (reminderMessage) {
+                    reminderText.textContent = reminderMessage;
+                    reminderBanner.classList.remove('hidden');
+                }
+            };
+            // ▲▲▲ FUNGSI DIPERBAIKI ▲▲▲
+
+            closeReminderBtn.addEventListener('click', () => {
+                reminderBanner.classList.add('hidden');
+                localStorage.setItem('lastReminderMonth', new Date().getMonth().toString());
+            });
+            
+            checkReminders();
 
             const btnInfo = document.getElementById('btn-info-pusat');
             btnInfo.addEventListener('click', () => {
                 const infoContentHTML = `
-                    <div class="space-y-6 text-left text-slate-700">
+                    <div class="space-y-6 text-left">
                         <div>
                             <h4 class="font-bold text-lg text-teal-700 mb-2">Glosarium Istilah</h4>
                             <dl class="space-y-3">
@@ -338,17 +452,21 @@
                                 <dd class="pl-4 text-sm border-l-2 border-teal-200">Satuan energi listrik yang Anda gunakan. 1 kWh berarti Anda menggunakan daya 1.000 Watt selama 1 jam.</dd>
                                 <dt class="font-semibold text-slate-800">PPJ (Pajak Penerangan Jalan)</dt>
                                 <dd class="pl-4 text-sm border-l-2 border-teal-200">Pajak yang dipungut atas penggunaan listrik untuk mendanai penerangan jalan umum. Persentasenya bervariasi per daerah.</dd>
-                                <dt class="font-semibold text-slate-800">Biaya Materai</dt>
-                                <dd class="pl-4 text-sm border-l-2 border-teal-200">Dikenakan pada tagihan pascabayar yang melebihi batas tertentu (saat ini ${formatRupiah(TARIF_DATA.materai.batas)}) sebagai pajak dokumen.</dd>
                                 <dt class="font-semibold text-slate-800">WBP & LWBP</dt>
-                                <dd class="pl-4 text-sm border-l-2 border-teal-200">Waktu Beban Puncak (WBP) adalah jam-jam sibuk (misal: 18:00-22:00) di mana tarif listrik lebih mahal. Luar Waktu Beban Puncak (LWBP) adalah sisa waktunya dengan tarif lebih murah. Umumnya berlaku untuk pelanggan bisnis dan industri.</dd>
+                                <dd class="pl-4 text-sm border-l-2 border-teal-200">Waktu Beban Puncak (WBP) adalah jam-jam sibuk (misal: 18:00-22:00) di mana tarif listrik lebih mahal. Luar Waktu Beban Puncak (LWBP) adalah sisa waktunya dengan tarif lebih murah.</dd>
                                 <dt class="font-semibold text-slate-800">kVARh (kiloVolt-Ampere Reactive hour)</dt>
                                 <dd class="pl-4 text-sm border-l-2 border-teal-200">Satuan untuk daya reaktif. Jika pemakaian daya reaktif melebihi batas (faktor daya rendah), pelanggan (biasanya industri) akan dikenakan denda/biaya kelebihan kVARh.</dd>
                             </dl>
                         </div>
                         <div>
-                            <h4 class="font-bold text-lg text-teal-700 mb-2">Tentang Golongan Tarif</h4>
-                            <p class="text-sm">Golongan tarif listrik ditentukan oleh pemerintah berdasarkan peruntukan (Rumah Tangga, Bisnis, Industri) dan batas daya (VA). Tarif per kWh bisa berbeda antar golongan. Aplikasi ini menggunakan tarif non-subsidi sebagai acuan.</p>
+                            <h4 class="font-bold text-lg text-teal-700 mb-2">庁 Tips Cerdas Hemat Energi</h4>
+                            <ul class="list-disc list-inside space-y-2 text-sm">
+                                <li>Ganti lampu pijar dengan lampu LED. Lampu LED 8 Watt bisa seterang lampu pijar 60 Watt, hemat energi hingga 85%!</li>
+                                <li>Cabut charger laptop/HP jika sudah tidak digunakan. Charger yang terus menancap tetap mengonsumsi listrik (vampire power).</li>
+                                <li>Atur suhu AC di 24-25ﾂｰC. Setiap menaikkan suhu 1ﾂｰC dapat menghemat biaya listrik AC hingga 10%.</li>
+                                <li>Gunakan timer atau matikan monitor, kipas angin, dan perangkat lain saat meninggalkan ruangan atau tidur.</li>
+                                <li>Bersihkan koil kondensor kulkas secara berkala. Debu yang menumpuk membuat kulkas bekerja lebih keras dan boros energi.</li>
+                            </ul>
                         </div>
                          <div>
                             <h4 class="font-bold text-lg text-red-600 mb-2">Disclaimer</h4>
@@ -358,10 +476,11 @@
                 `;
                 showModal('Pusat Informasi & Edukasi', infoContentHTML);
             });
+
+            switchMainTab('daya');
         });
     </script>
 
-    <!-- Script Kalkulator (URUTAN PENTING!) -->
     <script src="assets/js/data/tarif.js"></script>
     <script src="assets/js/harian.js"></script>
     <script src="assets/js/prabayar.js"></script>

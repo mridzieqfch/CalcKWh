@@ -12,6 +12,53 @@ document.addEventListener('DOMContentLoaded', () => {
         kwhAwal: document.getElementById('pascabayar-kwh-awal'),
         kwhAkhir: document.getElementById('pascabayar-kwh-akhir'),
     };
+    const reminderToggle = document.getElementById('pascabayar-reminder-toggle');
+    // ▼▼▼ KODE BARU ▼▼▼
+    const reminderDateContainer = document.getElementById('pascabayar-reminder-date-container');
+    const reminderDateInput = document.getElementById('pascabayar-reminder-date');
+    // ▲▲▲ KODE BARU ▲▲▲
+
+    // ▼▼▼ FUNGSI DIPERBAIKI ▼▼▼
+    const setupReminder = () => {
+        // Ambil data dari localStorage, jika tidak ada, gunakan default
+        const savedReminder = JSON.parse(localStorage.getItem('pascabayarReminder')) || { enabled: false, date: 25 };
+        
+        reminderToggle.checked = savedReminder.enabled;
+        reminderDateInput.value = savedReminder.date;
+
+        // Tampilkan atau sembunyikan input tanggal berdasarkan status toggle
+        if (savedReminder.enabled) {
+            reminderDateContainer.classList.remove('hidden');
+        } else {
+            reminderDateContainer.classList.add('hidden');
+        }
+
+        // Event listener untuk toggle
+        reminderToggle.addEventListener('change', () => {
+            const isEnabled = reminderToggle.checked;
+            reminderDateContainer.classList.toggle('hidden', !isEnabled);
+            saveReminderSettings();
+        });
+
+        // Event listener untuk input tanggal
+        reminderDateInput.addEventListener('change', () => {
+            let date = parseInt(reminderDateInput.value, 10);
+            if (isNaN(date) || date < 1) date = 1;
+            if (date > 28) date = 28; // Batasi tanggal hingga 28 untuk amannya
+            reminderDateInput.value = date;
+            saveReminderSettings();
+        });
+    };
+    
+    const saveReminderSettings = () => {
+        const settings = {
+            enabled: reminderToggle.checked,
+            date: parseInt(reminderDateInput.value, 10) || 25
+        };
+        // Simpan sebagai string JSON
+        localStorage.setItem('pascabayarReminder', JSON.stringify(settings));
+    };
+    // ▲▲▲ FUNGSI DIPERBAIKI ▲▲▲
 
     const initGolonganSelect = () => {
         selectGolongan.innerHTML = '';
@@ -35,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const tarifPerKwh = parseFloat(selectGolongan.value) || 0;
         const kwhAwal = parseFloat(inputs.kwhAwal.value);
         const kwhAkhir = parseFloat(inputs.kwhAkhir.value);
-        // [PERBAIKAN] Ambil nilai PPJ dari input setiap kali submit
         const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         
         if (tarifPerKwh <= 0) {
@@ -65,15 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="pascabayar-tab-invoice">
                 <div class="mb-6"><h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Pemakaian</h3><div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg"><span class="text-slate-600">Total Pemakaian kWh</span><span class="font-bold text-slate-800 text-base sm:text-lg">${formatAngka(pemakaianKwh, 0)} kWh</span></div></div>
                 <div class="mb-6"><h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Biaya</h3><div class="space-y-2 text-slate-700"><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>Biaya Pemakaian</span><span class="font-semibold">${formatRupiah(subtotalBiaya)}</span></div><div class="flex justify-between items-center py-2 border-b border-slate-200"><span>PPJ (${(ppjPersen * 100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(biayaPpj)}</span></div><div class="flex justify-between items-center py-2"><span>Biaya Materai</span><span class="font-semibold">${formatRupiah(biayaMateraiFinal)}</span></div></div></div>
-                <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-4 rounded-xl mt-6"><div class="flex justify-between items-center"><span class="text-lg sm:text-xl font-bold uppercase">Total Tagihan</span><span class="text-lg sm:text-xl font-extrabold tracking-tight">${formatRupiah(totalTagihan)}</span></div></div>
+                <div class="bg-gradient-to-br from-yellow-400/80 via-teal-500 to-teal-500 text-white p-4 rounded-xl mt-6"><div class="flex justify-between items-center"><span class="text-lg sm:text-xl font-bold uppercase">Total Tagihan</span><span class="text-lg sm:text-xl font-extrabold tracking-tight">${formatRupiah(totalTagihan)}</span></div></div>
             </div>`;
         
         const detailHTML = `
             <div id="pascabayar-tab-detail" class="hidden">
                 <div class="space-y-4 text-sm text-slate-600">
-                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold">Pemakaian kWh</p><p class="mt-1 font-mono">${formatAngka(kwhAkhir, 2)} - ${formatAngka(kwhAwal, 2)} = <strong class="text-slate-900">${formatAngka(pemakaianKwh, 2)} kWh</strong></p></div>
-                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold">Biaya Pemakaian</p><p class="mt-1 font-mono">${formatAngka(pemakaianKwh, 2)} kWh &times; ${formatRupiah(tarifPerKwh)} = <strong class="text-slate-900">${formatRupiah(subtotalBiaya)}</strong></p></div>
-                    <div class="p-3 bg-teal-50 rounded-lg border border-teal-200"><p class="font-semibold">Total Tagihan</p><p class="mt-1 font-mono">${formatRupiah(subtotalBiaya)} + ${formatRupiah(biayaPpj)} (PPJ) + ${formatRupiah(biayaMateraiFinal)} (Materai) = <strong class="text-teal-900">${formatRupiah(totalTagihan)}</strong></p></div>
+                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold text-slate-800">Pemakaian kWh</p><p class="mt-1 font-mono">${formatAngka(kwhAkhir, 2)} - ${formatAngka(kwhAwal, 2)} = <strong class="text-slate-900">${formatAngka(pemakaianKwh, 2)} kWh</strong></p></div>
+                    <div class="p-3 bg-slate-100 rounded-lg"><p class="font-semibold text-slate-800">Biaya Pemakaian</p><p class="mt-1 font-mono">${formatAngka(pemakaianKwh, 2)} kWh &times; ${formatRupiah(tarifPerKwh)} = <strong class="text-slate-900">${formatRupiah(subtotalBiaya)}</strong></p></div>
+                    <div class="p-3 bg-teal-50 rounded-lg border border-teal-200"><p class="font-semibold text-teal-800">Total Tagihan</p><p class="mt-1 font-mono">${formatRupiah(subtotalBiaya)} + ${formatRupiah(biayaPpj)} (PPJ) + ${formatRupiah(biayaMateraiFinal)} (Materai) = <strong class="text-teal-900">${formatRupiah(totalTagihan)}</strong></p></div>
                 </div>
             </div>`;
 
@@ -122,8 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: `pascabayar-${Date.now()}`,
                 tipe: 'Pascabayar',
                 tanggal: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }),
-                deskripsi: `${namaGolongan} (${formatAngka(pemakaianKwh, 0)} kWh)`,
+                deskripsi: `${namaGolongan}`,
                 total: totalTagihan,
+                kwh: pemakaianKwh,
                 detailHTML: detailHTML.replace('class="hidden"', '')
             };
 
@@ -140,4 +187,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectGolongan.addEventListener('change', updateTarifDisplay);
     initGolonganSelect();
+    setupReminder();
 });

@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const tarifPerKwh = parseFloat(selectGolongan.value) || 0;
         const nominalBeli = parseFloat(inputNominal.value.replace(/\./g, '')) || 0;
-        // [PERBAIKAN] Ambil nilai PPJ dari input setiap kali submit
         const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         
         if (tarifPerKwh <= 0) {
@@ -60,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="bg-white p-5 sm:p-7 rounded-xl">
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-6">Rincian Pembelian Token</h2>
                     
-                    <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-5 rounded-xl space-y-2">
+                    <div class="bg-gradient-to-br from-yellow-400/80 via-teal-500 to-teal-500 text-white p-5 rounded-xl space-y-2">
                         <div class="flex justify-between items-baseline">
                             <span class="text-sm font-semibold uppercase opacity-90">kWh Yang Didapat</span>
                             <span class="text-xl font-extrabold tracking-tight">${formatAngka(kwhDidapat, 2)} kWh</span>

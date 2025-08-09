@@ -16,14 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
         dayaWatt: document.getElementById('daya-watt'),
         jamPakai: document.getElementById('daya-jam'),
     };
-    // Elemen untuk fitur simulator
     const inputAnggaran = document.getElementById('daya-anggaran');
     const rekomendasiSection = document.getElementById('rekomendasi-daya');
 
     let daftarPerangkat = [];
     let tarifKwhSaatIni = 0;
+    let totalBiayaSaatIni = 0;
+    let totalKwhBulananSaatIni = 0;
 
-    // Inisialisasi dropdown golongan tarif
     const initGolonganSelect = () => {
         selectGolonganTarif.innerHTML = '';
         TARIF_DATA.golongan.forEach(g => {
@@ -35,14 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTarifDisplay();
     };
 
-    // Memperbarui tampilan tarif saat golongan diganti
     const updateTarifDisplay = () => {
         tarifKwhSaatIni = parseFloat(selectGolonganTarif.value);
         tarifDisplay.textContent = `${formatRupiah(tarifKwhSaatIni)}/kWh`;
         renderDaftarPerangkat();
     };
 
-    // Fungsi untuk menghasilkan rekomendasi penghematan
     const generateRekomendasi = (selisih, totalBiaya, anggaran) => {
         let rekomendasiHTML = `
             <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-lg slide-fade-in">
@@ -83,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         rekomendasiSection.innerHTML = rekomendasiHTML;
     };
 
-    // Merender daftar perangkat yang ditambahkan
     const renderDaftarPerangkat = () => {
         containerDaftarPerangkat.innerHTML = '';
         if (daftarPerangkat.length === 0) {
@@ -115,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTotalBiaya();
     };
 
-    // [DIPERBAIKI] Merender total biaya dan memicu rekomendasi jika perlu
     const renderTotalBiaya = () => {
         if (daftarPerangkat.length === 0) {
             hasilSection.classList.add('hidden');
@@ -125,28 +121,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const ppjPersen = (parseFloat(inputPpj.value) || 0) / 100;
         const totalKwhHarian = daftarPerangkat.reduce((total, p) => total + ((p.watt * p.jam) / 1000), 0);
-        const totalKwhBulanan = totalKwhHarian * 30;
-        const subtotal = totalKwhBulanan * tarifKwhSaatIni;
+        totalKwhBulananSaatIni = totalKwhHarian * 30;
+        const subtotal = totalKwhBulananSaatIni * tarifKwhSaatIni;
         const ppj = subtotal * ppjPersen;
-        const totalBiaya = subtotal + ppj;
+        totalBiayaSaatIni = subtotal + ppj;
 
-        // [DILENGKAPI] Kode HTML untuk ringkasan
         const ringkasanHTML = `
             <div id="daya-tab-ringkasan">
                 <div class="space-y-2 text-slate-700">
-                    <div class="flex justify-between items-center py-2 border-b"><span>Total Pemakaian Energi</span><span class="font-semibold">${formatAngka(totalKwhBulanan, 2)} kWh/Bulan</span></div>
+                    <div class="flex justify-between items-center py-2 border-b"><span>Total Pemakaian Energi</span><span class="font-semibold">${formatAngka(totalKwhBulananSaatIni, 2)} kWh/Bulan</span></div>
                     <div class="flex justify-between items-center py-2 border-b"><span>Biaya Pemakaian</span><span class="font-semibold">${formatRupiah(subtotal)}</span></div>
                     <div class="flex justify-between items-center py-2"><span>PPJ (${(ppjPersen * 100).toFixed(1)}%)</span><span class="font-semibold">${formatRupiah(ppj)}</span></div>
                 </div>
-                <div class="bg-gradient-to-br from-yellow-400/50 via-teal-500/80 to-teal-500 text-white p-4 rounded-xl mt-6">
+                <div class="bg-gradient-to-br from-yellow-400/80 via-teal-500 to-teal-500 text-white p-4 rounded-xl mt-6">
                     <div class="flex justify-between items-center">
                         <span class="text-lg font-bold uppercase">Total Tagihan</span>
-                        <span class="text-xl font-extrabold">${formatRupiah(totalBiaya)}</span>
+                        <span class="text-xl font-extrabold">${formatRupiah(totalBiayaSaatIni)}</span>
                     </div>
                 </div>
             </div>`;
         
-        // [DILENGKAPI] Kode HTML untuk detail perhitungan
         const detailHTML = `
             <div id="daya-tab-detail" class="hidden">
                 <div class="space-y-4 text-sm text-slate-600">
@@ -155,18 +149,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         return `
                         <div class="p-3 bg-slate-100 rounded-lg">
                             <p class="font-semibold text-slate-800">${p.nama}</p>
-                            <p class="mt-1 font-mono">(${p.watt}W &times; ${p.jam}Jam &times; 30Hari) / 1000 = <strong class="text-slate-900">${formatAngka(kwhBulananPerangkat, 2)} kWh</strong></p>
+                            <p class="mt-1 font-mono">(${p.watt}W &times; ${p.jam}Jam / 1000) &times; 30Hari = <strong class="text-slate-900">${formatAngka(kwhBulananPerangkat, 2)} kWh</strong></p>
                         </div>
                     `}).join('')}
                     <div class="p-3 bg-teal-50 rounded-lg border border-teal-200">
                         <p class="font-semibold text-teal-800">Total Biaya & Pajak</p>
                         <p class="mt-1 font-mono">
-                            Subtotal: ${formatAngka(totalKwhBulanan, 2)} kWh &times; ${formatRupiah(tarifKwhSaatIni)} = <strong class="text-teal-900">${formatRupiah(subtotal)}</strong>
+                            Subtotal: ${formatAngka(totalKwhBulananSaatIni, 2)} kWh &times; ${formatRupiah(tarifKwhSaatIni)} = <strong class="text-teal-900">${formatRupiah(subtotal)}</strong>
                             <br>
                             PPJ: ${formatRupiah(subtotal)} &times; ${(ppjPersen * 100).toFixed(1)}% = <strong class="text-teal-900">${formatRupiah(ppj)}</strong>
                         </p>
                         <hr class="border-dashed border-teal-200 my-2">
-                        <p class="font-mono text-base">Total: ${formatRupiah(subtotal)} + ${formatRupiah(ppj)} = <strong class="text-teal-900">${formatRupiah(totalBiaya)}</strong></p>
+                        <p class="font-mono text-base">Total: ${formatRupiah(subtotal)} + ${formatRupiah(ppj)} = <strong class="text-teal-900">${formatRupiah(totalBiayaSaatIni)}</strong></p>
                     </div>
                 </div>
             </div>`;
@@ -183,6 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${ringkasanHTML}
                         ${detailHTML}
                     </div>
+                    <div class="mt-8">
+                        <button id="btn-simpan-daya" class="w-full bg-teal-500 text-white font-bold py-3 px-4 rounded-xl hover:bg-teal-600 transition">Simpan ke Riwayat</button>
+                    </div>
                 </div>
             </div>`;
         hasilSection.classList.remove('hidden');
@@ -191,9 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
         rekomendasiSection.innerHTML = '';
         rekomendasiSection.classList.add('hidden');
 
-        if (anggaran > 0 && totalBiaya > anggaran) {
-            const selisih = totalBiaya - anggaran;
-            generateRekomendasi(selisih, totalBiaya, anggaran);
+        if (anggaran > 0 && totalBiayaSaatIni > anggaran) {
+            const selisih = totalBiayaSaatIni - anggaran;
+            generateRekomendasi(selisih, totalBiayaSaatIni, anggaran);
             rekomendasiSection.classList.remove('hidden');
         }
         
@@ -208,10 +205,36 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        hasilSection.querySelector('#btn-simpan-daya').addEventListener('click', (e) => {
+            const riwayatItem = {
+                id: `perangkat-${Date.now()}`,
+                tipe: 'Perangkat',
+                tanggal: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }),
+                deskripsi: `${daftarPerangkat.length} perangkat`,
+                total: totalBiayaSaatIni,
+                kwh: totalKwhBulananSaatIni,
+                detailHTML: hasilSection.querySelector('#daya-tab-detail').innerHTML,
+                perangkat: daftarPerangkat
+            };
+
+            let riwayat = JSON.parse(localStorage.getItem('riwayatTagihan')) || [];
+            riwayat.unshift(riwayatItem);
+            localStorage.setItem('riwayatTagihan', JSON.stringify(riwayat));
+
+            e.target.textContent = 'Tersimpan!';
+            e.target.disabled = true;
+            e.target.classList.add('bg-green-500');
+
+            setTimeout(() => {
+                e.target.textContent = 'Simpan ke Riwayat';
+                e.target.disabled = false;
+                e.target.classList.remove('bg-green-500');
+            }, 2000);
+        });
+
         setTimeout(() => hasilSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
     };
 
-    // Event Listeners
     selectGolonganTarif.addEventListener('change', updateTarifDisplay);
     inputPpj.addEventListener('input', renderDaftarPerangkat);
 
